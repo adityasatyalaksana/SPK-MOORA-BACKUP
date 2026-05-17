@@ -34,7 +34,7 @@
                             $first = $items->first(); 
                             $skorC4 = $items->where('kriteria_id', $kriterias->where('kode_kriteria', 'C4')->first()->id ?? 0)->first()->nilai ?? 0;
                             $modalId = "modalEdit" . $first->jalur_id . "_" . $first->biaya_id;
-                            @endphp
+                        @endphp
                             
                             <tr>
                             {{-- Mountain and Trail --}}
@@ -52,12 +52,12 @@
                                 </small>
                             </td>
 
-                            {{-- Travel Estimate: Mengambil data 'estimasi' dari Master Biaya --}}
+                            {{-- Travel Estimate --}}
                             <td class="text-center fw-bold">
-                                {{ $first->biaya->estimasi_perjalanan. ' Jam' ?? '-' }}
+                                {{ $first->biaya->estimasi_perjalanan ?? '-' }} Jam
                             </td>
 
-                            {{-- Round Trip Price: Mengambil data 'harga_reguler' dari Master Biaya --}}
+                            {{-- Round Trip Price --}}
                             <td class="text-end fw-bold text-dark">
                                 Rp {{ number_format($first->biaya->harga_pp ?? 0, 0, ',', '.') }}
                             </td>
@@ -68,7 +68,7 @@
                                 <small class="text-info">{{ $first->jalur->estimasi_jam ?? '-' }} Jam Mendaki</small>
                             </td>
 
-                            {{-- Difficulty Level: Sinkronisasi Skor 1 = MUDAH --}}
+                            {{-- Difficulty Level --}}
                             <td class="text-center">
                                 @if($skorC4 == 1) <span class="badge bg-info px-3 py-2">MUDAH</span>
                                 @elseif($skorC4 == 3) <span class="badge bg-success px-3 py-2">SEDANG</span>
@@ -100,7 +100,7 @@
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <div class="modal-header bg-warning">
-                                        <h5 class="modal-title fw-bold">Edit Penilaian: {{ $first->jalur->gunung->nama_gunung }}</h5>
+                                        <h5 class="modal-title fw-bold">Edit Penilaian: {{ $first->jalur->gunung->nama_gunung ?? '' }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <form action="{{ route('admin.penilaian.store') }}" method="POST">
@@ -155,14 +155,22 @@
                             <label class="form-label fw-bold">Jalur Gunung</label>
                             <select name="jalur_id" class="form-select border-primary" required>
                                 <option value="">-- Pilih --</option>
-                                @foreach($jalurs as $j) <option value="{{ $j->id }}">{{ $j->gunung->nama_gunung }} - {{ $j->nama_jalur }}</option> @endforeach
+                                @foreach($jalurs as $j) 
+                                    <option value="{{ $j->id }}">
+                                        Gn. {{ $j->gunung->nama_gunung }} - {{ $j->nama_jalur }} ({{ $j->gunung->ketinggian }} Mdpl | {{ $j->nama_jalur == 'Apuy' ? 'Mudah' : ($j->nama_jalur == 'Cibodas' ? 'Sedang' : 'Sulit') }} | {{ $j->estimasi_jam }} Jam)
+                                    </option> 
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Armada Bus</label>
                             <select name="biaya_id" class="form-select border-primary" required>
                                 <option value="">-- Pilih --</option>
-                                @foreach($biayas as $b) <option value="{{ $b->id }}">{{ $b->nama_armada }} ({{ $b->start_terminal->nama_terminal }})</option> @endforeach
+                                @foreach($biayas as $b) 
+                                    <option value="{{ $b->id }}">
+                                        {{ $b->nama_armada }} ({{ $b->start_terminal->short_name ?? 'Poris' }} ➔ {{ $b->end_terminal->nama_terminal ?? 'Gunung' }}) | {{ $b->estimasi_perjalanan }}J | Rp{{ number_format($b->harga_pp, 0, ',', '.') }}
+                                    </option> 
+                                @endforeach
                             </select>
                         </div>
                     </div>

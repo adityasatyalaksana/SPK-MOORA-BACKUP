@@ -17,12 +17,11 @@ class PenilaianController extends Controller
             'jalur.gunung', 
             'biaya.start_terminal', 
             'biaya.end_terminal'
-        ])
-        ->with('biaya')->get();
+        ])->get();
         
         $jalurs = Jalur::with('gunung')->get();
         $biayas = Biaya::with(['start_terminal', 'end_terminal'])->get();
-// dd($penilaians);
+
         return view('admin.penilaian.index', compact('kriterias', 'penilaians', 'jalurs', 'biayas'));
     }
 

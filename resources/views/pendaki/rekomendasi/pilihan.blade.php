@@ -47,11 +47,11 @@
     {{-- Ringkasan Pencarian --}}
     <div class="card search-summary-card shadow-lg">
         <div class="row align-items-center">
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <h3 class="fw-bold mb-1">Eksplorasi Sesuai Kantong</h3>
-                <p class="text-white-50 mb-0 small">Berdasarkan budget dan titik keberangkatan Anda.</p>
+                <p class="text-white-50 mb-0 small">Berdasarkan rute budget, jumlah anggota, beserta tanggal rencana keberangkatan Anda.</p>
             </div>
-            <div class="col-md-5 mt-3 mt-md-0 d-flex flex-wrap gap-2 justify-content-md-end">
+            <div class="col-md-6 mt-3 mt-md-0 d-flex flex-wrap gap-2 justify-content-md-end">
                 <div class="parameter-badge">
                     <i class="bi bi-wallet2 me-2"></i>Rp {{ number_format($input['budget'], 0, ',', '.') }}
                 </div>
@@ -60,6 +60,10 @@
                 </div>
                 <div class="parameter-badge">
                     <i class="bi bi-people me-2"></i>{{ $input['jumlah_anggota'] }} Orang
+                </div>
+                {{-- DETAIL INFORMASI TANGGAL PILIHAN USER (FITUR BARU) --}}
+                <div class="parameter-badge border-success border-opacity-50 fw-bold" style="background: rgba(25, 135, 84, 0.2);">
+                    <i class="bi bi-calendar-event me-2 text-success"></i>{{ isset($input['tanggal_keberangkatan']) ? date('d M Y', strtotime($input['tanggal_keberangkatan'])) : '-' }}
                 </div>
             </div>
         </div>
@@ -70,7 +74,7 @@
         <div class="col-lg-4 col-md-6">
             <div class="card hiking-card shadow-sm p-3 h-100 {{ $loop->first ? 'best-card' : '' }}">
                 
-                {{-- Badge Ranking (Melayang aman di atas kartu) --}}
+                {{-- Badge Ranking --}}
                 <div class="rank-floating {{ $loop->first ? 'rank-utama' : 'rank-biasa' }}">
                     @if($loop->first)
                         <i class="bi bi-trophy-fill me-2"></i>REKOMENDASI UTAMA
@@ -112,7 +116,7 @@
                             <i class="bi bi-record-circle text-success me-3"></i>
                             <div>
                                 <span class="info-label">Dari</span>
-                                <span class="info-value">{{ $nama_terminal }}</span> {{-- Terminal Pilihan Pendaki --}}
+                                <span class="info-value">{{ $nama_terminal }}</span>
                             </div>
                         </div>
                         <div class="transport-item">

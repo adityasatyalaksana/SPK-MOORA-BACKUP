@@ -49,7 +49,7 @@
                     <i class="bi bi-lightning-charge-fill mb-3" style="font-size: 3rem;"></i>
                     <h5 class="fw-bold">Mulai Sekarang</h5>
                     <p class="small text-white-50 mb-4">Dapatkan rekomendasi gunung terbaik hanya dalam hitungan detik.</p>
-                    <a href="{{ route('beranda.rekomendasi') }}" class="btn btn-light fw-bold py-2 shadow-sm">
+                    <a href="{{ route('rekomendasi.index') }}" class="btn btn-light fw-bold py-2 shadow-sm">
                         Cari Rekomendasi
                     </a>
                 </div>
