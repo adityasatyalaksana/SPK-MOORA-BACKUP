@@ -32,6 +32,7 @@ class BiayaController extends Controller
             'nama_armada' => 'required',
             'estimasi_perjalanan' => 'required|integer',
             'harga_pp' => 'required|integer',
+            'harga_weekend' => 'nullable|integer', // Menampung input harga weekend (opsional)
         ]);
 
         Biaya::create($request->all());
@@ -48,6 +49,7 @@ class BiayaController extends Controller
             'nama_armada' => 'required',
             'estimasi_perjalanan' => 'required|integer',
             'harga_pp' => 'required|integer',
+            'harga_weekend' => 'nullable|integer', // Menampung update harga weekend (opsional)
         ]);
 
         $biaya = Biaya::findOrFail($id);
@@ -73,6 +75,21 @@ class BiayaController extends Controller
         ]);
 
         return back()->with('success', 'Harga periode berhasil diterapkan!');
+    }
+
+    /**
+     * FITUR BARU: Mengosongkan data periode khusus (Reset ke tarif reguler/weekend)
+     */
+    public function resetPeriod($id)
+    {
+        $biaya = Biaya::findOrFail($id);
+        $biaya->update([
+            'start_date' => null,
+            'end_date' => null,
+            'harga_periode' => null,
+        ]);
+
+        return back()->with('success', 'Harga periode berhasil direset ke tarif normal!');
     }
 
     public function destroy($id)

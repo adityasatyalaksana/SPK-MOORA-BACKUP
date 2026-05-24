@@ -32,11 +32,9 @@ Route::get('/', [BerandaController::class, 'index'])->name('beranda.index');
 // Halaman Profil Gunung
 Route::get('/profile-gunung', [ProfileController::class, 'index'])->name('pendaki.profile.index');
 
-/** 
- * FITUR CARI REKOMENDASI
+/** * FITUR CARI REKOMENDASI
  * Menggunakan RekomendasiController untuk logika MOORA & Budgeting
  */
-// Cari bagian FITUR CARI REKOMENDASI dan ubah menjadi:
 Route::get('/cari-rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi.index');
 Route::get('/pilihan-gunung', [RekomendasiController::class, 'proses'])->name('rekomendasi.proses');
 
@@ -92,6 +90,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'destroy' => 'biaya.destroy',
     ]);
     Route::post('biaya/apply-period', [BiayaController::class, 'applyPeriod'])->name('biaya.apply_period');
+    Route::post('biaya/reset-period/{id}', [BiayaController::class, 'resetPeriod'])->name('biaya.reset_period'); // <-- SINKRONISASI ROUTE BARU
 
     // 6. Master Data: Kriteria & Sub-Kriteria
     Route::resource('kriteria', KriteriaController::class)->names([

@@ -32,7 +32,7 @@
                             <th>Armada</th>
                             <th>Rute (Start → End)</th>
                             <th>Estimasi</th>
-                            <th>Harga Reguler</th>
+                            <th>Tarif Normal</th>
                             <th>Harga Periode</th>
                             <th class="text-center pe-4">Aksi</th>
                         </tr>
@@ -52,12 +52,24 @@
                                 <span class="badge border border-success text-success">{{ $item->end_terminal->nama_terminal }}</span>
                             </td>
                             <td>{{ $item->estimasi_perjalanan }} Jam</td>
-                            <td class="fw-bold">Rp {{ number_format($item->harga_pp, 0, ',', '.') }}</td>
+                            <td>
+                                <span class="d-block"><small class="text-muted">Wd:</small> <strong>Rp {{ number_format($item->harga_pp, 0, ',', '.') }}</strong></span>
+                                <span class="d-block text-success"><small class="text-muted">We:</small> <strong>Rp {{ number_format($item->harga_weekend ?? $item->harga_pp, 0, ',', '.') }}</strong></span>
+                            </td>
                             <td>
                                 @if($item->start_date)
-                                    <div class="p-2 border rounded bg-light">
-                                        <span class="text-danger fw-bold d-block">Rp {{ number_format($item->harga_periode, 0, ',', '.') }}</span>
-                                        <small class="text-muted" style="font-size: 0.75rem;">{{ $item->start_date }} s/d {{ $item->end_date }}</small>
+                                    <div class="p-2 border rounded bg-light d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <span class="text-danger fw-bold d-block">Rp {{ number_format($item->harga_periode, 0, ',', '.') }}</span>
+                                            <small class="text-muted" style="font-size: 0.75rem;">{{ $item->start_date }} s/d {{ $item->end_date }}</small>
+                                        </div>
+                                        {{-- TOMBOL RESET PERIODE KHUSUS --}}
+                                        <form action="{{ route('biaya.reset_period', $item->id) }}" method="POST" class="ms-2" onsubmit="return confirm('Apakah Anda yakin ingin mereset harga periode armada ini kembali ke normal?')">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-warning text-dark border-0 p-1 px-2" title="Reset Periode Jadi Normal">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 @else
                                     <span class="text-muted small">-</span>
@@ -123,13 +135,19 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-6 mb-3">
+                                                <div class="col-12 mb-3">
                                                     <label class="form-label fw-bold small">ESTIMASI (JAM)</label>
                                                     <input type="number" name="estimasi_perjalanan" class="form-control" value="{{ $item->estimasi_perjalanan }}" required>
                                                 </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-6 mb-3">
-                                                    <label class="form-label fw-bold small">HARGA PP</label>
+                                                    <label class="form-label fw-bold small">HARGA PP (WEEKDAY)</label>
                                                     <input type="number" name="harga_pp" class="form-control" value="{{ $item->harga_pp }}" required>
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label class="form-label fw-bold small text-success">HARGA WEEKEND</label>
+                                                    <input type="number" name="harga_weekend" class="form-control border-success" value="{{ $item->harga_weekend }}" placeholder="Kosongkan jika sama">
                                                 </div>
                                             </div>
                                         </div>
@@ -191,13 +209,19 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-6 mb-3">
+                        <div class="col-12 mb-3">
                             <label class="form-label fw-bold small">ESTIMASI (JAM)</label>
                             <input type="number" name="estimasi_perjalanan" class="form-control" required>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-6 mb-3">
-                            <label class="form-label fw-bold small">HARGA PP</label>
+                            <label class="form-label fw-bold small">HARGA PP (WEEKDAY)</label>
                             <input type="number" name="harga_pp" class="form-control" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label fw-bold small text-success">HARGA WEEKEND</label>
+                            <input type="number" name="harga_weekend" class="form-control border-success" placeholder="Kosongkan jika sama">
                         </div>
                     </div>
                 </div>

@@ -15,7 +15,8 @@ class Biaya extends Model
         'end_terminal_id', 
         'nama_armada', 
         'estimasi_perjalanan', 
-        'harga_pp', 
+        'harga_pp',
+        'harga_weekend', 
         'start_date', 
         'end_date', 
         'harga_periode'

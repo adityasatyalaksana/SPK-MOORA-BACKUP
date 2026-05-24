@@ -7,6 +7,7 @@ use App\Models\Terminal;
 use App\Models\Jalur;
 use App\Models\Kriteria;
 use App\Models\Penilaian;
+use Carbon\Carbon; // <-- PENTING: Import library Carbon untuk deteksi hari/tanggal
 
 class RekomendasiController extends Controller
 {
@@ -26,8 +27,9 @@ class RekomendasiController extends Controller
             'tanggal_keberangkatan' => 'required|date' // Pastikan name="tanggal_keberangkatan" di view blade Anda
         ]);
 
-        // Tangkap input tanggal keberangkatan dari user
+        // Tangkap input tanggal keberangkatan dari user dan bungkus dengan Carbon
         $tanggalKeberangkatan = $request->tanggal_keberangkatan;
+        $date = Carbon::parse($tanggalKeberangkatan);
 
         // 2. Ambil data terminal terpilih
         $terminal = Terminal::find($request->terminal_id);
@@ -47,18 +49,29 @@ class RekomendasiController extends Controller
             $biayaBus = $jalur->biayas->where('start_terminal_id', $request->terminal_id)->first();
 
             if ($biayaBus) {
-                // --- PERBAIKAN LOGIKA PENENTUAN HARGA TRANSPORT ---
-                // Set default harga ke harga reguler/pp terlebih dahulu
-                $hargaTransport = $biayaBus->harga_pp; 
+                // =====================================================================
+                // --- SINKRONISASI 3 TINGKATAN (KASTA) HARGA TRANSPORT ---
+                // =====================================================================
+                $hargaTransport = null;
 
-                // Periksa apakah harga periode diset, dan apakah tanggal input masuk dalam range periode tersebut
+                // KASTA 1: Periksa apakah ada Harga Periode Khusus (Event/Hari Besar) yang sedang aktif
                 if (!empty($biayaBus->harga_periode) && !empty($biayaBus->start_date) && !empty($biayaBus->end_date)) {
                     if ($tanggalKeberangkatan >= $biayaBus->start_date && $tanggalKeberangkatan <= $biayaBus->end_date) {
-                        // Jika tanggal pendaki masuk dalam range, switch ke harga khusus periode
                         $hargaTransport = $biayaBus->harga_periode; 
                     }
                 }
-                // --- END PERBAIKAN LOGIKA ---
+
+                // Jika Kasta 1 tidak terpenuhi, lanjut ke pengecekan berikutnya
+                if (is_null($hargaTransport)) {
+                    if ($date->isWeekend()) {
+                        // KASTA 2: Hari Sabtu/Minggu (Jika harga_weekend kosong, otomatis fallback ke harga_pp reguler)
+                        $hargaTransport = $biayaBus->harga_weekend ?? $biayaBus->harga_pp;
+                    } else {
+                        // KASTA 3: Hari Biasa Senin - Jumat (Menggunakan tarif dasar reguler)
+                        $hargaTransport = $biayaBus->harga_pp;
+                    }
+                }
+                // =====================================================================
 
                 $hargaSimaksi = $jalur->biaya_simaksi;
                 $totalEstimasi = ($hargaTransport + $hargaSimaksi) * $request->jumlah_anggota;
@@ -69,7 +82,7 @@ class RekomendasiController extends Controller
                     // Set properti dinamis untuk keperluan visual di Blade
                     $jalur->nama_terminal_tujuan = $terminalTujuan->nama_terminal ?? '-';
                     $jalur->nama_armada = $biayaBus->nama_armada;
-                    $jalur->harga_pp = $hargaTransport; // Sekarang nilainya dinamis (bisa reguler / periode)
+                    $jalur->harga_pp = $hargaTransport; // Nilai dinamis mengikuti hirarki kasta di atas
                     $jalur->estimasi_perjalanan = $biayaBus->estimasi_perjalanan;
                     $jalur->biaya_per_orang = $hargaTransport + $hargaSimaksi;
                     $jalur->total_dana_kelompok = $totalEstimasi;
@@ -80,15 +93,15 @@ class RekomendasiController extends Controller
                     $jalurLolosFilter[] = $jalur;
 
                     // Bentuk Matriks Keputusan Awal (Tabel 1)
-                    foreach ($kriterias as $kriteria) {
+                    foreach ($kriterias as $kcriteria) {
                         // Cari baris nilai berdasarkan kombinasi jalur_id, biaya_id, dan kriteria_id
                         $penilaian = Penilaian::where('jalur_id', $jalur->id)
                             ->where('biaya_id', $biayaBus->id)
-                            ->where('kriteria_id', $kriteria->id)
+                            ->where('kriteria_id', $kcriteria->id) // <-- AMAN: Sudah murni kriteria_id tanpa huruf c
                             ->first();
 
                         // Jika data penilaian belum diisi admin, default ke skor minimum 1
-                        $matriksKeputusan[$jalur->id][$kriteria->id] = $penilaian ? $penilaian->nilai : 1;
+                        $matriksKeputusan[$jalur->id][$kcriteria->id] = $penilaian ? $penilaian->nilai : 1;
                     }
                 }
             }
@@ -109,14 +122,14 @@ class RekomendasiController extends Controller
 
         // LANGKAH A: Menghitung Nilai Pembagi Normalisasi (Akar Jumlah Kuadrat Lintas Alternatif)
         $pembagiKriteria = [];
-        foreach ($kriterias as $kriteria) {
+        foreach ($kriterias as $kcriteria) { // Konsisten menggunakan objek $kcriteria
             $jumlahKuadrat = 0;
             foreach ($jalurLolosFilter as $jalur) {
-                $nilaiSkor = $matriksKeputusan[$jalur->id][$kriteria->id];
+                $nilaiSkor = $matriksKeputusan[$jalur->id][$kcriteria->id];
                 $jumlahKuadrat += pow($nilaiSkor, 2);
             }
             // Hindari pembagian dengan angka nol
-            $pembagiKriteria[$kriteria->id] = $jumlahKuadrat > 0 ? sqrt($jumlahKuadrat) : 1;
+            $pembagiKriteria[$kcriteria->id] = $jumlahKuadrat > 0 ? sqrt($jumlahKuadrat) : 1;
         }
 
         // LANGKAH B & C: Normalisasi, Kalikan Bobot, dan Hitung Nilai Akhir Yi (Max - Min)
@@ -125,17 +138,17 @@ class RekomendasiController extends Controller
             $nilaiMaxBenefit = 0;
             $nilaiMinCost = 0;
 
-            foreach ($kriterias as $kriteria) {
-                $nilaiAwal = $matriksKeputusan[$jalur->id][$kriteria->id];
+            foreach ($kriterias as $kcriteria) {
+                $nilaiAwal = $matriksKeputusan[$jalur->id][$kcriteria->id];
                 
                 // Rumus Normalisasi Xij
-                $nilaiNormalisasi = $nilaiAwal / $pembagiKriteria[$kriteria->id];
+                $nilaiNormalisasi = $nilaiAwal / $pembagiKriteria[$kcriteria->id];
                 
                 // Rumus Matriks Terbobot Yij
-                $nilaiTerbobot = $nilaiNormalisasi * $kriteria->bobot;
+                $nilaiTerbobot = $nilaiNormalisasi * $kcriteria->bobot;
 
                 // Pisahkan penjumlahan berdasarkan tipe kriteria (case-insensitive)
-                if (strtolower($kriteria->tipe) == 'benefit') {
+                if (strtolower($kcriteria->tipe) == 'benefit') {
                     $nilaiMaxBenefit += $nilaiTerbobot;
                 } else {
                     $nilaiMinCost += $nilaiTerbobot;
