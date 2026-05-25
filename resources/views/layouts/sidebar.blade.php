@@ -1,7 +1,7 @@
 <div id="sidebar" class="bg-dark text-white shadow" style="min-width: 280px; min-height: 100vh; position: sticky; top: 0;">
     <div class="p-4">
         <div class="text-center mb-4">
-            <h4 class="fw-bold mt-2 mb-0" style="letter-spacing: 2px;">SISTEM GUNUNG</h4>
+            <h4 class="fw-bold mt-2 mb-0" style="letter-spacing: 2px;">SPK MOORA</h4>
             <hr class="border-secondary mt-3">
         </div>
         

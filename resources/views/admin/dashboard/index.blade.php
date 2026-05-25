@@ -64,10 +64,11 @@
                 <div class="card-body">
                     <div class="p-4 bg-light rounded border-start border-4 border-primary">
                         <h5>Sistem Pendukung Keputusan (SPK)</h5>
-                        <p class="mb-0">Metode <strong>MOORA</strong> digunakan untuk mengoptimalkan pemilihan jalur pendakian berdasarkan dua jenis kriteria:</p>
-                        <ul class="mt-2">
-                            <li><strong>Benefit:</strong> Ketinggian, Fasilitas (Semakin besar semakin baik).</li>
-                            <li><strong>Cost:</strong> Biaya Simaksi, Transportasi (Semakin kecil semakin baik).</li>
+                        <p class="mb-2">Metode <strong>MOORA</strong> pada sistem ini dioptimalkan menggunakan pendekatan <strong>Sinkronisasi Nilai Preferensi Positif (Full Benefit Criteria)</strong>.</p>
+                        <p class="mb-0 text-muted small">Seluruh parameter penilaian ditransformasikan menjadi tipe kriteria keuntungan, di mana kondisi paling ideal bagi pendaki dikonversi menjadi bobot preferensi tertinggi:</p>
+                        <ul class="mt-2 mb-0 fw-bold text-secondary" style="font-size: 0.9rem;">
+                            <li><i class="fas fa-check text-success me-1"></i> Nilai Maksimum (Skor 5): Merepresentasikan biaya paling murah, waktu paling efisien, dan rute ideal.</li>
+                            <li><i class="fas fa-check text-success me-1"></i> Nilai Minimum (Skor 1): Merepresentasikan biaya tinggi, waktu perjalanan lama, atau medan berat.</li>
                         </ul>
                     </div>
                     <div class="mt-4 text-center">
@@ -87,9 +88,10 @@
     new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: {!! json_encode($chartLabels) !!},
-            datasets: [{
-                data: {!! json_encode($chartWeights) !!},
+        labels: @json($chartLabels),
+        datasets: [{
+            data: @json($chartWeights),
+            // ... sisa kode lainnya
                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'],
                 hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#be2617', '#60616f'],
                 hoverBorderColor: "rgba(234, 236, 244, 1)",
@@ -98,7 +100,21 @@
         options: {
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: true, position: 'bottom' }
+                legend: { display: true, position: 'bottom' },
+                // FIX: Gunakan format callback yang lebih aman ini
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            // Ambil nama label kriteria (misal: Biaya Transportasi)
+                            let label = context.label || '';
+                            // Ambil nilai angka mentahnya
+                            let value = context.parsed !== undefined ? context.parsed : context.raw;
+                            
+                            // Gabungkan label dengan angka yang dipaksa 2 desimal (0.30)
+                            return ' ' + label + ': ' + Number(value).toFixed(2);
+                        }
+                    }
+                }
             },
             cutout: '70%',
         },

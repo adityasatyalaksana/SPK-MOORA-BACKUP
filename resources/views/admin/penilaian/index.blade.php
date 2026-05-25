@@ -70,9 +70,12 @@
 
                             {{-- Difficulty Level --}}
                             <td class="text-center">
-                                @if($skorC4 == 1) <span class="badge bg-info px-3 py-2">MUDAH</span>
-                                @elseif($skorC4 == 3) <span class="badge bg-success px-3 py-2">SEDANG</span>
-                                @elseif($skorC4 == 5) <span class="badge bg-danger px-3 py-2">SULIT</span>
+                                @if($skorC4 == 5) 
+                                    <span class="badge bg-info px-3 py-2">MUDAH</span>
+                                @elseif($skorC4 == 3) 
+                                    <span class="badge bg-success px-3 py-2">SEDANG</span>
+                                @elseif($skorC4 == 1) 
+                                    <span class="badge bg-danger px-3 py-2">SULIT</span>
                                 @endif
                             </td>
 
