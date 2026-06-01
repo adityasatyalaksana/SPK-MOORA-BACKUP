@@ -5,7 +5,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <h4 class="fw-bold text-dark">Proses Perhitungan MOORA</h4>
-            <p class="text-muted small">Halaman kalkulasi matriks keputusan hingga hasil rekomendasi akhir berdasarkan kriteria keuntungan (Benefit).</p>
+            <p class="text-muted small">Halaman kalkulasi matriks keputusan hingga hasil rekomendasi akhir berdasarkan kombinasi kriteria keuntungan (Benefit) dan kriteria biaya (Cost).</p>
         </div>
     </div>
 
@@ -21,7 +21,7 @@
                             <th class="py-2" style="width: 20%;">Nama Gunung</th>
                             <th class="py-2" style="width: 20%;">Jalur Pendakian</th>
                             @foreach($kriterias as $k) 
-                                <th class="py-2">{{ $k->nama_kriteria }}</th> 
+                                <th class="py-2">{{ $k->nama_kriteria }} ({{ ucfirst($k->tipe) }})</th> 
                             @endforeach
                         </tr>
                     </thead>
@@ -93,10 +93,12 @@
                 <table class="table table-striped table-hover border align-middle mb-0">
                     <thead class="table-dark text-center">
                         <tr>
-                            <th class="py-3" style="width: 15%;">Peringkat</th>
-                            <th class="py-3" style="width: 30%;">Nama Gunung</th>
-                            <th class="py-3" style="width: 30%;">Jalur Pendakian</th>
-                            <th class="py-3" style="width: 25%;">Skor Akhir ($Y_i$)</th>
+                            <th class="py-3" style="width: 10%;">Peringkat</th>
+                            <th class="py-3" style="width: 25%;">Nama Gunung</th>
+                            <th class="py-3" style="width: 25%;">Jalur Pendakian</th>
+                            <th class="py-3" style="width: 15%;">Total Benefit ($\sum \text{Max}$)</th>
+                            <th class="py-3" style="width: 15%;">Total Cost ($\sum \text{Min}$)</th>
+                            <th class="py-3" style="width: 10%;">Skor Akhir ($Y_i$)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -116,16 +118,26 @@
                             </td>
                             <td class="text-center fw-bold py-3 text-dark">{{ $namaGunung }}</td>
                             <td class="text-center text-muted py-3">{{ $namaJalur }}</td>
-                            <td class="fw-bold text-success fs-5 py-3">{{ number_format($data['skor'], 4) }}</td>
+                            
+                            <td class="text-secondary py-3 fw-semibold">{{ number_format($data['max'], 4) }}</td>
+                            
+                            <td class="text-secondary py-3 fw-semibold">{{ number_format($data['min'], 4) }}</td>
+                            
+                            <td class="py-3">
+                                <span class="fw-bold fs-5 {{ $data['skor'] >= 0 ? 'text-success' : 'text-danger' }}">
+                                    {{ number_format($data['skor'], 4) }}
+                                </span>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+            
             <div class="mt-3 p-3 bg-light rounded border-start border-4 border-success">
                 <p class="mb-0 small text-muted">
                     <i class="fas fa-info-circle me-1 text-success"></i> 
-                    <strong>Catatan Akademis:</strong> Perangkingan di atas murni didasarkan pada nilai akhir optimasi multi-obyektif ($Y_i$) dengan kriteria keuntungan (Full Benefit Criteria). Jalur dengan skor tertinggi merupakan alternatif rute pendakian yang paling optimal.
+                    <strong>Catatan Akademis:</strong> Nilai Akhir Preferensi ($Y_i$) diperoleh dari hasil pengurangan kolom <strong>Total Benefit ($\sum \text{Max}$)</strong> dengan <strong>Total Cost ($\sum \text{Min}$)</strong>. Alternatif rute pendakian dengan skor tertinggi ditempatkan pada peringkat teratas sebagai rekomendasi keputusan yang paling optimal.
                 </p>
             </div>
         </div>

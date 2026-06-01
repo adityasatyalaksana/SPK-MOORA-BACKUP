@@ -43,13 +43,14 @@ class HasilController extends Controller
             $pembagi[$k->id] = $sumKuadrat > 0 ? sqrt($sumKuadrat) : 1;
         }
 
-        // 2. Normalisasi & Terbobot
+        // 2. Normalisasi, Terbobot & Perhitungan Nilai Akhir (MOORA)
         $terbobot = [];
         $hasil = [];
         
         foreach ($jalurs as $j) {
             $namaUnik = $j->gunung->nama_gunung . ' (' . $j->nama_jalur . ')';
-            $max = 0;
+            $max = 0; // Untuk menampung akumulasi kriteria BENEFIT
+            $min = 0; // Untuk menampung akumulasi kriteria COST
             
             foreach ($kriterias as $k) {
                 $nilaiAsli = $matriks[$namaUnik][$k->nama_kriteria] ?? 0;
@@ -58,14 +59,22 @@ class HasilController extends Controller
                 
                 $terbobot[$namaUnik][$k->nama_kriteria] = $nilaiBobot;
 
-                // Karena SEKARANG murni menggunakan BENEFIT, semua nilai bobot langsung dijumlahkan ke $max
-                $max += $nilaiBobot;
+                // Memisahkan penjumlahan secara dinamis berdasarkan tipe kriteria dari database
+                if (strtolower($k->tipe) == 'benefit') {
+                    $max += $nilaiBobot;
+                } else {
+                    $min += $nilaiBobot;
+                }
             }
+
+            // Rumus Utama MOORA: Yi = (Σ Max Benefit) - (Σ Min Cost)
+            $skorAkhir = $max - $min;
 
             $hasil[] = [
                 'jalur' => $namaUnik, // Mengirimkan nama gabungan yang informatif ke Blade
                 'max'   => $max,
-                'skor'  => $max // Nilai Yi (Skor Akhir) ekuivalen dengan nilai Max Benefit
+                'min'   => $min,
+                'skor'  => $skorAkhir // Nilai Yi (Skor Akhir) hasil optimasi penuh
             ];
         }
 
