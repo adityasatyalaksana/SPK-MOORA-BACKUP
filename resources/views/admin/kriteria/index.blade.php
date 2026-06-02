@@ -47,18 +47,18 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2">
                                     {{-- Tombol Edit --}}
-                                    <button class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalEditKriteria{{ $item->id }}">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditKriteria{{ $item->id }}" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-
-                                    {{-- Tombol Hapus --}}
-                                    <form action="{{ route('kriteria.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus kriteria ini?')">
-                                        @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger border-0">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
+ 
+                                     {{-- Tombol Hapus --}}
+                                     <form action="{{ route('kriteria.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus kriteria ini?')">
+                                         @csrf @method('DELETE')
+                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                             <i class="bi bi-trash"></i>
+                                         </button>
+                                     </form>
+                                 </div>
                             </td>
                         </tr>
 

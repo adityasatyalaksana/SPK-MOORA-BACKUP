@@ -42,18 +42,20 @@
                             <td class="text-center">
                                 <span class="badge bg-dark">{{ $s->bobot }}</span>
                             </td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $s->id }}">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </button>
-                                <form action="{{ route('sub-kriteria.destroy', $s->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus data ini?')">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </form>
-                            </td>
+                             <td class="text-center">
+                                 <div class="d-flex justify-content-center gap-2">
+                                     <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $s->id }}" title="Edit">
+                                         <i class="bi bi-pencil-square"></i>
+                                     </button>
+                                     <form action="{{ route('sub-kriteria.destroy', $s->id) }}" method="POST">
+                                         @csrf
+                                         @method('DELETE')
+                                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus data ini?')" title="Hapus">
+                                             <i class="bi bi-trash"></i>
+                                         </button>
+                                     </form>
+                                 </div>
+                             </td>
                         </tr>
 
                         {{-- MODAL EDIT --}}

@@ -51,19 +51,19 @@
                             <td><i class="bi bi-geo-alt text-danger"></i> {{ $item->lokasi }}</td>
                             <td>{{ number_format($item->ketinggian) }} MDPL</td>
                             <td class="text-center">
-                                <div class="btn-group shadow-sm">
-                                    <button type="button" class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}">
-                                        <i class="bi bi-eye"></i> Detail
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}" title="Detail">
+                                        <i class="bi bi-eye"></i>
                                     </button>
                                     
-                                    <a href="{{ route('gunung.edit', $item->id) }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-pencil"></i>
+                                    <a href="{{ route('gunung.edit', $item->id) }}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
                                     </a>
 
-                                    <form action="{{ route('gunung.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus {{ $item->nama_gunung }}?')">
+                                    <form action="{{ route('gunung.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus {{ $item->nama_gunung }}?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

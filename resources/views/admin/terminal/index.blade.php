@@ -45,15 +45,15 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditTerminal{{ $item->id }}">
-                                        <i class="bi bi-pencil"></i> Edit
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditTerminal{{ $item->id }}" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
 
                                     <form action="{{ route('terminal.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus terminal {{ $item->nama_terminal }}?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 
 @section('content')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <div class="container-fluid p-4" style="background: #f8f9fc;">
     
@@ -11,20 +10,20 @@
             <p class="text-muted small mb-0">Manajemen akun admin dan pengguna sistem skripsi Anda.</p>
         </div>
         <a href="{{ route('users.create') }}" class="btn btn-primary shadow-sm px-4">
-            <i class="fas fa-plus-circle me-2"></i>Tambah User
+            <i class="bi bi-plus-lg me-2"></i>Tambah User
         </a>
     </div>
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     @if(session('error'))
         <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
@@ -55,7 +54,7 @@
                                         <span class="fw-bold d-block text-dark">{{ $user->name }}</span>
                                         @if($user->id === auth()->user()->id)
                                             <span class="badge bg-soft-info text-info p-1 px-2" style="font-size: 0.65rem; background-color: #e0f7fa; border-radius: 50px;">
-                                                <i class="fas fa-user-check me-1"></i>Sedang Login
+                                                <i class="bi bi-person-check me-1"></i>Sedang Login
                                             </span>
                                         @endif
                                     </div>
@@ -66,21 +65,21 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2">
                                     
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-outline-info rounded-circle" title="Edit Data User" style="width: 32px; height: 32px; padding: 0; line-height: 30px;">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
                                     </a>
 
                                     @if($user->id !== auth()->user()->id)
                                         <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda benar-benar yakin ingin menghapus user ini? Data tidak bisa dikembalikan.')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Hapus User" style="width: 32px; height: 32px; padding: 0; line-height: 30px;">
-                                                <i class="fas fa-trash-alt"></i>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                                <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
                                     @else
-                                        <button class="btn btn-sm btn-outline-secondary rounded-circle disabled" title="Tidak dapat menghapus akun yang sedang digunakan" style="width: 32px; height: 32px; padding: 0; line-height: 30px;">
-                                            <i class="fas fa-trash-alt"></i>
+                                        <button class="btn btn-sm btn-outline-secondary disabled" title="Tidak dapat menghapus akun yang sedang digunakan">
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     @endif
 
@@ -90,7 +89,7 @@
                         @empty
                         <tr>
                             <td colspan="5" class="text-center py-5 text-muted bg-light">
-                                <i class="fas fa-users-slash fa-4x mb-3 opacity-25"></i>
+                                <i class="bi bi-people-fill d-block mb-3 opacity-25" style="font-size: 4rem;"></i>
                                 <h5 class="fw-bold">Belum Ada Data Pengguna</h5>
                                 <p class="small">Silakan klik tombol "Tambah User" untuk membuat akun baru.</p>
                             </td>

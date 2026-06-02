@@ -86,16 +86,19 @@
                                 </td>
                             @endforeach
 
-                            {{-- Aksi --}}
-                            <td class="text-center pe-3">
-                                <div class="btn-group shadow-sm">
-                                    <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">Edit</button>
-                                    <form action="{{ route('admin.penilaian.destroy', ['jalur' => $first->jalur_id, 'biaya' => $first->biaya_id]) }}" method="POST">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus baris ini?')">Hapus</button>
-                                    </form>
-                                </div>
-                            </td>
+                             <td class="text-center pe-3">
+                                 <div class="d-flex justify-content-center gap-2">
+                                     <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}" title="Edit">
+                                         <i class="bi bi-pencil-square"></i>
+                                     </button>
+                                     <form action="{{ route('admin.penilaian.destroy', ['jalur' => $first->jalur_id, 'biaya' => $first->biaya_id]) }}" method="POST">
+                                         @csrf @method('DELETE')
+                                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus baris ini?')" title="Hapus">
+                                             <i class="bi bi-trash"></i>
+                                         </button>
+                                     </form>
+                                 </div>
+                             </td>
                         </tr>
 
                         {{-- MODAL EDIT --}}

@@ -1,0 +1,21 @@
+- [x] Buat file migration `create_activity_logs_table`
+- [x] Jalankan migration `php artisan migrate`
+- [x] Buat model `ActivityLog` dengan helper log static dan relasinya
+- [x] Perbarui model `User` untuk menyertakan relasi `hasMany` ke `ActivityLog`
+- [x] Buat controller `ActivityLogController` untuk mengelola view log
+- [x] Tambahkan rute log di `web.php`
+- [x] Tambahkan menu "Log Aktivitas" di sidebar admin (`sidebar.blade.php`)
+- [x] Buat halaman view `admin/logs/index.blade.php` untuk menampilkan tabel riwayat log
+- [x] Integrasikan pencatatan log otomatis ke dalam store, update, dan destroy method di admin controllers:
+  - [x] GunungController
+  - [x] TerminalController
+  - [x] JalurController
+  - [x] BiayaController
+  - [x] KriteriaController
+  - [x] SubKriteriaController
+  - [x] PenilaianController
+  - [x] UserController
+- [x] Perbarui seeder dan factory (DatabaseSeeder & UserFactory) untuk menggunakan username secara penuh
+- [x] Bersihkan cache view/config/route Laravel agar perubahan email -> username langsung diterapkan
+- [x] Perbarui script generator SVG dan jalankan untuk meregenerasi diagram ERD yang menyertakan tabel `activity_logs`
+- [x] Verifikasi seluruh alur log aktivitas dan pembersihan email dari log

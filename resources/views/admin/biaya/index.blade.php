@@ -77,13 +77,13 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalEditBiaya{{ $item->id }}">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditBiaya{{ $item->id }}" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     
                                     <form action="{{ route('biaya.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus data?')">
                                         @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger border-0">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

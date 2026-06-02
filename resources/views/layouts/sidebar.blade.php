@@ -1,4 +1,15 @@
-<div id="sidebar" class="bg-dark text-white shadow" style="min-width: 280px; min-height: 100vh; position: sticky; top: 0;">
+<style>
+    #sidebar .nav-link i {
+        color: rgba(255, 255, 255, 0.6) !important;
+        transition: color 0.15s ease-in-out;
+    }
+    #sidebar .nav-link:hover i,
+    #sidebar .nav-link.active i {
+        color: #ffffff !important;
+    }
+</style>
+
+<div id="sidebar" class="bg-dark text-white shadow" style="min-width: 280px; height: 100vh; position: sticky; top: 0; overflow-y: auto; align-self: flex-start;">
     <div class="p-4">
         <div class="text-center mb-4">
             <h4 class="fw-bold mt-2 mb-0" style="letter-spacing: 2px;">SPK MOORA</h4>
@@ -11,19 +22,19 @@
             
             <li class="nav-item mb-1">
                 <a href="/" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('/') ? 'active bg-success' : '' }}">
-                    <i class="bi bi-house-door-fill me-3 text-primary"></i> Beranda Pendaki
+                    <i class="bi bi-house me-3"></i> Beranda Pendaki
                 </a>
             </li>
 
             <li class="nav-item mb-1">
                 <a href="/profile-gunung" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('profile-gunung*') ? 'active bg-success' : '' }}">
-                    <i class="bi bi-image me-3 text-light"></i> Profile Gunung
+                    <i class="bi bi-image me-3"></i> Profile Gunung
                 </a>
             </li>
 
             <li class="nav-item mb-1">
                 <a href="/cari-rekomendasi" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('cari-rekomendasi*') ? 'active bg-success' : '' }}">
-                    <i class="bi bi-search me-3 text-info"></i> Cari Rekomendasi
+                    <i class="bi bi-search me-3"></i> Cari Rekomendasi
                 </a>
             </li>
 
@@ -32,7 +43,7 @@
                 
                 <li class="nav-item mb-1">
                     <a href="/admin/dashboard" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/dashboard') ? 'active bg-success shadow' : '' }}">
-                        <i class="bi bi-speedometer2 me-3 text-warning"></i> Dashboard Admin
+                        <i class="bi bi-speedometer2 me-3"></i> Dashboard Admin
                     </a>
                 </li>
 
@@ -40,25 +51,25 @@
                 
                 <li class="nav-item mb-1">
                     <a href="/admin/gunung" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/gunung*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-layers-half me-3 text-success"></i> Data Gunung
+                        <i class="bi bi-layers me-3"></i> Data Gunung
                     </a>
                 </li>
 
                 <li class="nav-item mb-1">
                     <a href="/admin/terminal" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/terminal*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-bus-front-fill me-3 text-info"></i> Data Terminal
+                        <i class="bi bi-bus-front me-3"></i> Data Terminal
                     </a>
                 </li>
 
                 <li class="nav-item mb-1">
                     <a href="/admin/jalur" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/jalur*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-signpost-2-fill me-3 text-warning"></i> Data Jalur
+                        <i class="bi bi-signpost-2 me-3"></i> Data Jalur
                     </a>
                 </li>
 
                 <li class="nav-item mb-1">
                     <a href="/admin/biaya" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/biaya*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-wallet2 me-3 text-success"></i> Data Biaya
+                        <i class="bi bi-wallet2 me-3"></i> Data Biaya
                     </a>
                 </li>
 
@@ -66,26 +77,26 @@
                 
                 <li class="nav-item mb-1">
                     <a href="/admin/kriteria" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/kriteria*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-list-check me-3 text-primary"></i> Data Kriteria
+                        <i class="bi bi-list-check me-3"></i> Data Kriteria
                     </a>
                 </li>
 
                 {{-- Menu Baru: Data Sub-Kriteria --}}
                 <li class="nav-item mb-1">
                     <a href="/admin/sub-kriteria" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/sub-kriteria*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-list-nested me-3 text-info"></i> Data Sub-Kriteria
+                        <i class="bi bi-list-nested me-3"></i> Data Sub-Kriteria
                     </a>
                 </li>
 
                 <li class="nav-item mb-1">
                     <a href="/admin/penilaian" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/penilaian*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-pencil-square me-3 text-warning"></i> Data Penilaian
+                        <i class="bi bi-pencil-square me-3"></i> Data Penilaian
                     </a>
                 </li>
 
                 <li class="nav-item mb-1">
                     <a href="/admin/hasil" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/hasil*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-calculator-fill me-3 text-danger"></i> Hasil Perhitungan
+                        <i class="bi bi-calculator me-3"></i> Hasil Perhitungan
                     </a>
                 </li>
 
@@ -93,13 +104,13 @@
 
                 <li class="nav-item mb-1">
                     <a href="/admin/users" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/users*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-people-fill me-3 text-info"></i> Kelola User
+                        <i class="bi bi-people me-3"></i> Kelola User
                     </a>
                 </li>
 
                 <li class="nav-item mb-1">
                     <a href="/admin/logs" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/logs*') ? 'active bg-success' : '' }}">
-                        <i class="bi bi-clock-history me-3 text-warning"></i> Log Aktivitas
+                        <i class="bi bi-clock-history me-3"></i> Log Aktivitas
                     </a>
                 </li>
             @endauth

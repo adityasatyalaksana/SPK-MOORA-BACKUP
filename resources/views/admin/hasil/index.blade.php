@@ -11,7 +11,7 @@
 
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-header bg-secondary text-white py-3">
-            <h6 class="m-0 font-weight-bold"><i class="fas fa-table me-2"></i>1. Matriks Keputusan (Nilai Awal)</h6>
+            <h6 class="m-0 font-weight-bold"><i class="bi bi-table me-2"></i>1. Matriks Keputusan (Nilai Awal)</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -49,7 +49,7 @@
 
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-header bg-info text-white py-3">
-            <h6 class="m-0 font-weight-bold"><i class="fas fa-layer-group me-2"></i>2. Matriks Ternormalisasi Terbobot</h6>
+            <h6 class="m-0 font-weight-bold"><i class="bi bi-layers me-2"></i>2. Matriks Ternormalisasi Terbobot</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -86,7 +86,7 @@
 
     <div class="card shadow-sm border-0">
         <div class="card-header bg-success text-white py-3">
-            <h6 class="m-0 font-weight-bold"><i class="fas fa-trophy me-2"></i>3. Hasil Akhir & Perangkingan</h6>
+            <h6 class="m-0 font-weight-bold"><i class="bi bi-trophy me-2"></i>3. Hasil Akhir & Perangkingan</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -136,7 +136,7 @@
             
             <div class="mt-3 p-3 bg-light rounded border-start border-4 border-success">
                 <p class="mb-0 small text-muted">
-                    <i class="fas fa-info-circle me-1 text-success"></i> 
+                    <i class="bi bi-info-circle me-1 text-success"></i> 
                     <strong>Catatan Akademis:</strong> Nilai Akhir Preferensi ($Y_i$) diperoleh dari hasil pengurangan kolom <strong>Total Benefit ($\sum \text{Max}$)</strong> dengan <strong>Total Cost ($\sum \text{Min}$)</strong>. Alternatif rute pendakian dengan skor tertinggi ditempatkan pada peringkat teratas sebagai rekomendasi keputusan yang paling optimal.
                 </p>
             </div>
