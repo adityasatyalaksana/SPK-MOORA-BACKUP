@@ -10,12 +10,18 @@ class Jalur extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'gunung_id', 
         'nama_jalur', 
         'biaya_simaksi', 
         'estimasi_jam', 
         'tingkat_kesulitan'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function gunung()
     {

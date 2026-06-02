@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kriteria;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class KriteriaController extends Controller
@@ -23,7 +24,10 @@ class KriteriaController extends Controller
             'bobot'         => 'required|numeric',
         ]);
 
-        Kriteria::create($request->all());
+        $data = $request->all();
+        $data['user_id'] = auth()->id();
+        $kriteria = Kriteria::create($data);
+        ActivityLog::log("Menambahkan Kriteria " . $kriteria->kode_kriteria . " - " . $kriteria->nama_kriteria);
         return back()->with('success', 'Kriteria berhasil ditambahkan!');
     }
 
@@ -39,13 +43,18 @@ class KriteriaController extends Controller
             'bobot'         => 'required|numeric',
         ]);
 
-        $kriteria->update($request->all());
+        $data = $request->all();
+        $data['user_id'] = auth()->id();
+        $kriteria->update($data);
+        ActivityLog::log("Mengubah Kriteria " . $kriteria->kode_kriteria . " - " . $kriteria->nama_kriteria);
         return back()->with('success', 'Kriteria berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
-        Kriteria::findOrFail($id)->delete();
+        $kriteria = Kriteria::findOrFail($id);
+        $kriteria->delete();
+        ActivityLog::log("Menghapus Kriteria " . $kriteria->kode_kriteria . " - " . $kriteria->nama_kriteria);
         return back()->with('success', 'Kriteria berhasil dihapus!');
     }
 }

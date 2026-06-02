@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Biaya;
 use App\Models\Terminal;
 use App\Models\Jalur; // Penting: Import Model Jalur
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class BiayaController extends Controller
@@ -35,7 +36,10 @@ class BiayaController extends Controller
             'harga_weekend' => 'nullable|integer', // Menampung input harga weekend (opsional)
         ]);
 
-        Biaya::create($request->all());
+        $data = $request->all();
+        $data['user_id'] = auth()->id();
+        $biaya = Biaya::create($data);
+        ActivityLog::log("Menambahkan biaya armada " . $biaya->nama_armada);
 
         return back()->with('success', 'Jalur Bus berhasil ditambahkan!');
     }
@@ -53,7 +57,11 @@ class BiayaController extends Controller
         ]);
 
         $biaya = Biaya::findOrFail($id);
-        $biaya->update($request->all());
+        $data = $request->all();
+        $data['user_id'] = auth()->id();
+        $biaya->update($data);
+
+        ActivityLog::log("Mengubah data biaya armada " . $biaya->nama_armada);
 
         return back()->with('success', 'Data armada berhasil diperbarui!');
     }
@@ -69,10 +77,13 @@ class BiayaController extends Controller
 
         $biaya = Biaya::findOrFail($request->biaya_id);
         $biaya->update([
+            'user_id' => auth()->id(),
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'harga_periode' => $request->harga_periode,
         ]);
+
+        ActivityLog::log("Menerapkan harga periode khusus untuk armada " . $biaya->nama_armada);
 
         return back()->with('success', 'Harga periode berhasil diterapkan!');
     }
@@ -84,17 +95,22 @@ class BiayaController extends Controller
     {
         $biaya = Biaya::findOrFail($id);
         $biaya->update([
+            'user_id' => auth()->id(),
             'start_date' => null,
             'end_date' => null,
             'harga_periode' => null,
         ]);
+
+        ActivityLog::log("Mereset harga periode khusus untuk armada " . $biaya->nama_armada);
 
         return back()->with('success', 'Harga periode berhasil direset ke tarif normal!');
     }
 
     public function destroy($id)
     {
-        Biaya::findOrFail($id)->delete();
+        $biaya = Biaya::findOrFail($id);
+        $biaya->delete();
+        ActivityLog::log("Menghapus biaya armada " . $biaya->nama_armada);
         return back()->with('success', 'Data berhasil dihapus!');
     }
 }

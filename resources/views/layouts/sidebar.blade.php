@@ -96,6 +96,12 @@
                         <i class="bi bi-people-fill me-3 text-info"></i> Kelola User
                     </a>
                 </li>
+
+                <li class="nav-item mb-1">
+                    <a href="/admin/logs" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/logs*') ? 'active bg-success' : '' }}">
+                        <i class="bi bi-clock-history me-3 text-warning"></i> Log Aktivitas
+                    </a>
+                </li>
             @endauth
         </ul>
 

@@ -26,8 +26,8 @@
                 <form action="/login" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label class="form-label">Email Address</label>
-                        <input type="email" name="email" class="form-control" required autofocus>
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" required autofocus>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>

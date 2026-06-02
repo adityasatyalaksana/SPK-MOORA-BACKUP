@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1180" height="800" viewBox="0 0 1180 800" xmlns="http://www.w3.org/2000/svg" style="background-color: #1e293b; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Shadow Filter -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="2" dy="4" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.5"/>
+    </filter>
+    <!-- Connector Line Markers (Arrows) -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 2 L 8 5 L 0 8 z" fill="#94a3b8" />
+    </marker>
+    <!-- Crow Foot / Many Marker -->
+    <marker id="crowfoot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 5 L 8 5 M 4 2 L 8 5 L 4 8" fill="none" stroke="#64748b" stroke-width="1.5" />
+    </marker>
+    <!-- Admin Audit Trail Line Marker (Cyan) -->
+    <marker id="crowfoot-admin" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 5 L 8 5 M 4 2 L 8 5 L 4 8" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+    </marker>
+  </defs>
+  <!-- Header Title -->
+  <text x="30" y="40" fill="#f8fafc" font-size="22" font-weight="bold">DATABASE ERD - SPK MOORA (AUDIT TRAIL &amp; LOG CONNECTED)</text>
+  <text x="30" y="60" fill="#06b6d4" font-size="13">Tabel users terhubung ke tabel log dan tabel master sebagai Audit Trail</text>
+  <g filter="url(#shadow)">
+    <rect x="40" y="120" width="220" height="200" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="40" y="120" width="220" height="32" rx="8" fill="#1e293b" />
+    <rect x="40" y="144" width="220" height="8" fill="#1e293b" />
+    <line x1="40" y1="152" x2="260" y2="152" stroke="#334155" stroke-width="1" />
+    <text x="52" y="141" fill="#f8fafc" font-size="14" font-weight="bold">users</text>
+    <text x="52" y="170" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="248" y="170" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="52" y="188" fill="#f8fafc" font-size="12" font-weight="normal">name</text>
+    <text x="248" y="188" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="52" y="206" fill="#f59e0b" font-size="12" font-weight="normal">username</text>
+    <text x="248" y="206" fill="#64748b" font-size="11" text-anchor="end">varchar(255) (UK)</text>
+    <text x="52" y="224" fill="#94a3b8" font-size="12" font-weight="normal">email_verified_at</text>
+    <text x="248" y="224" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+    <text x="52" y="242" fill="#64748b" font-size="12" font-weight="normal">password</text>
+    <text x="248" y="242" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="52" y="260" fill="#64748b" font-size="12" font-weight="normal">remember_token</text>
+    <text x="248" y="260" fill="#64748b" font-size="11" text-anchor="end">varchar(100)</text>
+    <text x="52" y="278" fill="#64748b" font-size="12" font-weight="normal">created_at</text>
+    <text x="248" y="278" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+    <text x="52" y="296" fill="#64748b" font-size="12" font-weight="normal">updated_at</text>
+    <text x="248" y="296" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="40" y="380" width="220" height="160" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="40" y="380" width="220" height="32" rx="8" fill="#1e293b" />
+    <rect x="40" y="404" width="220" height="8" fill="#1e293b" />
+    <line x1="40" y1="412" x2="260" y2="412" stroke="#334155" stroke-width="1" />
+    <text x="52" y="401" fill="#f8fafc" font-size="14" font-weight="bold">activity_logs</text>
+    <text x="52" y="430" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="248" y="430" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="52" y="448" fill="#06b6d4" font-size="12" font-weight="bold">user_id</text>
+    <text x="248" y="448" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="52" y="466" fill="#f8fafc" font-size="12" font-weight="normal">activity</text>
+    <text x="248" y="466" fill="#64748b" font-size="11" text-anchor="end">text</text>
+    <text x="52" y="484" fill="#64748b" font-size="12" font-weight="normal">created_at</text>
+    <text x="248" y="484" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+    <text x="52" y="502" fill="#64748b" font-size="12" font-weight="normal">updated_at</text>
+    <text x="248" y="502" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="310" y="120" width="220" height="200" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="310" y="120" width="220" height="32" rx="8" fill="#1e293b" />
+    <rect x="310" y="144" width="220" height="8" fill="#1e293b" />
+    <line x1="310" y1="152" x2="530" y2="152" stroke="#334155" stroke-width="1" />
+    <text x="322" y="141" fill="#f8fafc" font-size="14" font-weight="bold">gunungs</text>
+    <text x="322" y="170" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="518" y="170" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="322" y="188" fill="#06b6d4" font-size="12" font-weight="bold">user_id</text>
+    <text x="518" y="188" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="322" y="206" fill="#f8fafc" font-size="12" font-weight="normal">nama_gunung</text>
+    <text x="518" y="206" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="322" y="224" fill="#94a3b8" font-size="12" font-weight="normal">lokasi</text>
+    <text x="518" y="224" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="322" y="242" fill="#94a3b8" font-size="12" font-weight="normal">ketinggian</text>
+    <text x="518" y="242" fill="#64748b" font-size="11" text-anchor="end">int</text>
+    <text x="322" y="260" fill="#64748b" font-size="12" font-weight="normal">deskripsi</text>
+    <text x="518" y="260" fill="#64748b" font-size="11" text-anchor="end">text</text>
+    <text x="322" y="278" fill="#64748b" font-size="12" font-weight="normal">gambar</text>
+    <text x="518" y="278" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="322" y="296" fill="#64748b" font-size="12" font-weight="normal">created_at</text>
+    <text x="518" y="296" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="580" y="120" width="220" height="200" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="580" y="120" width="220" height="32" rx="8" fill="#1e293b" />
+    <rect x="580" y="144" width="220" height="8" fill="#1e293b" />
+    <line x1="580" y1="152" x2="800" y2="152" stroke="#334155" stroke-width="1" />
+    <text x="592" y="141" fill="#f8fafc" font-size="14" font-weight="bold">kriterias</text>
+    <text x="592" y="170" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="788" y="170" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="592" y="188" fill="#06b6d4" font-size="12" font-weight="bold">user_id</text>
+    <text x="788" y="188" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="592" y="206" fill="#f8fafc" font-size="12" font-weight="normal">kode_kriteria</text>
+    <text x="788" y="206" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="592" y="224" fill="#94a3b8" font-size="12" font-weight="normal">nama_kriteria</text>
+    <text x="788" y="224" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="592" y="242" fill="#f59e0b" font-size="12" font-weight="normal">tipe</text>
+    <text x="788" y="242" fill="#64748b" font-size="11" text-anchor="end">enum(Benefit,Cost)</text>
+    <text x="592" y="260" fill="#94a3b8" font-size="12" font-weight="normal">bobot</text>
+    <text x="788" y="260" fill="#64748b" font-size="11" text-anchor="end">decimal(5,2)</text>
+    <text x="592" y="278" fill="#64748b" font-size="12" font-weight="normal">created_at</text>
+    <text x="788" y="278" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+    <text x="592" y="296" fill="#64748b" font-size="12" font-weight="normal">updated_at</text>
+    <text x="788" y="296" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="850" y="120" width="220" height="180" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="850" y="120" width="220" height="32" rx="8" fill="#1e293b" />
+    <rect x="850" y="144" width="220" height="8" fill="#1e293b" />
+    <line x1="850" y1="152" x2="1070" y2="152" stroke="#334155" stroke-width="1" />
+    <text x="862" y="141" fill="#f8fafc" font-size="14" font-weight="bold">terminals</text>
+    <text x="862" y="170" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="1058" y="170" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="862" y="188" fill="#06b6d4" font-size="12" font-weight="bold">user_id</text>
+    <text x="1058" y="188" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="862" y="206" fill="#f8fafc" font-size="12" font-weight="normal">nama_terminal</text>
+    <text x="1058" y="206" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="862" y="224" fill="#94a3b8" font-size="12" font-weight="normal">lokasi</text>
+    <text x="1058" y="224" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="862" y="242" fill="#f59e0b" font-size="12" font-weight="normal">tipe</text>
+    <text x="1058" y="242" fill="#64748b" font-size="11" text-anchor="end">enum(Start,End)</text>
+    <text x="862" y="260" fill="#64748b" font-size="12" font-weight="normal">created_at</text>
+    <text x="1058" y="260" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="310" y="370" width="220" height="220" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="310" y="370" width="220" height="32" rx="8" fill="#1e293b" />
+    <rect x="310" y="394" width="220" height="8" fill="#1e293b" />
+    <line x1="310" y1="402" x2="530" y2="402" stroke="#334155" stroke-width="1" />
+    <text x="322" y="391" fill="#f8fafc" font-size="14" font-weight="bold">jalurs</text>
+    <text x="322" y="420" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="518" y="420" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="322" y="438" fill="#06b6d4" font-size="12" font-weight="bold">user_id</text>
+    <text x="518" y="438" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="322" y="456" fill="#a855f7" font-size="12" font-weight="bold">gunung_id</text>
+    <text x="518" y="456" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="322" y="474" fill="#f8fafc" font-size="12" font-weight="normal">nama_jalur</text>
+    <text x="518" y="474" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="322" y="492" fill="#94a3b8" font-size="12" font-weight="normal">biaya_simaksi</text>
+    <text x="518" y="492" fill="#64748b" font-size="11" text-anchor="end">decimal(10,2)</text>
+    <text x="322" y="510" fill="#94a3b8" font-size="12" font-weight="normal">estimasi_jam</text>
+    <text x="518" y="510" fill="#64748b" font-size="11" text-anchor="end">decimal(5,2)</text>
+    <text x="322" y="528" fill="#f59e0b" font-size="12" font-weight="normal">tingkat_kesulitan</text>
+    <text x="518" y="528" fill="#64748b" font-size="11" text-anchor="end">enum(Mudah...)</text>
+    <text x="322" y="546" fill="#64748b" font-size="12" font-weight="normal">created_at</text>
+    <text x="518" y="546" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="580" y="370" width="220" height="160" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="580" y="370" width="220" height="32" rx="8" fill="#1e293b" />
+    <rect x="580" y="394" width="220" height="8" fill="#1e293b" />
+    <line x1="580" y1="402" x2="800" y2="402" stroke="#334155" stroke-width="1" />
+    <text x="592" y="391" fill="#f8fafc" font-size="14" font-weight="bold">sub_kriterias</text>
+    <text x="592" y="420" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="788" y="420" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="592" y="438" fill="#a855f7" font-size="12" font-weight="bold">kriteria_id</text>
+    <text x="788" y="438" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="592" y="456" fill="#f8fafc" font-size="12" font-weight="normal">nama_sub</text>
+    <text x="788" y="456" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="592" y="474" fill="#94a3b8" font-size="12" font-weight="normal">bobot</text>
+    <text x="788" y="474" fill="#64748b" font-size="11" text-anchor="end">int</text>
+    <text x="592" y="492" fill="#64748b" font-size="12" font-weight="normal">created_at</text>
+    <text x="788" y="492" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="850" y="350" width="240" height="300" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="850" y="350" width="240" height="32" rx="8" fill="#1e293b" />
+    <rect x="850" y="374" width="240" height="8" fill="#1e293b" />
+    <line x1="850" y1="382" x2="1090" y2="382" stroke="#334155" stroke-width="1" />
+    <text x="862" y="371" fill="#f8fafc" font-size="14" font-weight="bold">biayas</text>
+    <text x="862" y="400" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="1078" y="400" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="862" y="418" fill="#06b6d4" font-size="12" font-weight="bold">user_id</text>
+    <text x="1078" y="418" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="862" y="436" fill="#e2e8f0" font-size="12" font-weight="normal">jalur_id</text>
+    <text x="1078" y="436" fill="#64748b" font-size="11" text-anchor="end">bigint(FK, null)</text>
+    <text x="862" y="454" fill="#a855f7" font-size="12" font-weight="bold">start_terminal_id</text>
+    <text x="1078" y="454" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="862" y="472" fill="#a855f7" font-size="12" font-weight="bold">end_terminal_id</text>
+    <text x="1078" y="472" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="862" y="490" fill="#f8fafc" font-size="12" font-weight="normal">nama_armada</text>
+    <text x="1078" y="490" fill="#64748b" font-size="11" text-anchor="end">varchar(255)</text>
+    <text x="862" y="508" fill="#94a3b8" font-size="12" font-weight="normal">estimasi_perjalanan</text>
+    <text x="1078" y="508" fill="#64748b" font-size="11" text-anchor="end">int(jam)</text>
+    <text x="862" y="526" fill="#94a3b8" font-size="12" font-weight="normal">harga_pp</text>
+    <text x="1078" y="526" fill="#64748b" font-size="11" text-anchor="end">int</text>
+    <text x="862" y="544" fill="#64748b" font-size="12" font-weight="normal">harga_weekend</text>
+    <text x="1078" y="544" fill="#64748b" font-size="11" text-anchor="end">int(null)</text>
+    <text x="862" y="562" fill="#64748b" font-size="12" font-weight="normal">start_date</text>
+    <text x="1078" y="562" fill="#64748b" font-size="11" text-anchor="end">date(null)</text>
+    <text x="862" y="580" fill="#64748b" font-size="12" font-weight="normal">harga_periode</text>
+    <text x="1078" y="580" fill="#64748b" font-size="11" text-anchor="end">int(null)</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="580" y="580" width="220" height="200" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <rect x="580" y="580" width="220" height="32" rx="8" fill="#1e293b" />
+    <rect x="580" y="604" width="220" height="8" fill="#1e293b" />
+    <line x1="580" y1="612" x2="800" y2="612" stroke="#334155" stroke-width="1" />
+    <text x="592" y="601" fill="#f8fafc" font-size="14" font-weight="bold">penilaians</text>
+    <text x="592" y="630" fill="#38bdf8" font-size="12" font-weight="bold">id</text>
+    <text x="788" y="630" fill="#64748b" font-size="11" text-anchor="end">bigint(PK)</text>
+    <text x="592" y="648" fill="#06b6d4" font-size="12" font-weight="bold">user_id</text>
+    <text x="788" y="648" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="592" y="666" fill="#a855f7" font-size="12" font-weight="bold">jalur_id</text>
+    <text x="788" y="666" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="592" y="684" fill="#a855f7" font-size="12" font-weight="normal">biaya_id</text>
+    <text x="788" y="684" fill="#64748b" font-size="11" text-anchor="end">bigint(FK, null)</text>
+    <text x="592" y="702" fill="#a855f7" font-size="12" font-weight="bold">kriteria_id</text>
+    <text x="788" y="702" fill="#64748b" font-size="11" text-anchor="end">bigint(FK)</text>
+    <text x="592" y="720" fill="#f8fafc" font-size="12" font-weight="normal">nilai</text>
+    <text x="788" y="720" fill="#64748b" font-size="11" text-anchor="end">int</text>
+    <text x="592" y="738" fill="#64748b" font-size="12" font-weight="normal">created_at</text>
+    <text x="788" y="738" fill="#64748b" font-size="11" text-anchor="end">timestamp</text>
+  </g>
+  <!-- gunungs -> jalurs -->
+  <path d="M 420 320 L 420 370" stroke="#a855f7" stroke-width="1.5" fill="none" marker-end="url(#crowfoot)" />
+  <!-- jalurs -> biayas -->
+  <path d="M 530 450 L 690 450 L 690 410 L 850 410" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="3 3" marker-end="url(#crowfoot)" />
+  <!-- terminals -> biayas (start_terminal) -->
+  <path d="M 910 300 L 910 350" stroke="#a855f7" stroke-width="1.5" fill="none" marker-end="url(#crowfoot)" />
+  <!-- terminals -> biayas (end_terminal) -->
+  <path d="M 1010 300 L 1010 350" stroke="#a855f7" stroke-width="1.5" fill="none" marker-end="url(#crowfoot)" />
+  <!-- jalurs -> penilaians -->
+  <path d="M 420 590 L 420 650 L 580 650" stroke="#a855f7" stroke-width="1.5" fill="none" marker-end="url(#crowfoot)" />
+  <!-- biayas -> penilaians -->
+  <path d="M 900 650 L 900 680 L 800 680" stroke="#a855f7" stroke-width="1.5" fill="none" marker-end="url(#crowfoot)" />
+  <!-- kriterias -> sub_kriterias -->
+  <path d="M 690 320 L 690 370" stroke="#a855f7" stroke-width="1.5" fill="none" marker-end="url(#crowfoot)" />
+  <!-- kriterias -> penilaians -->
+  <path d="M 750 320 L 750 580" stroke="#f59e0b" stroke-width="1.5" fill="none" marker-end="url(#crowfoot)" />
+  <!-- AUDIT TRAIL RELATIONSHIPS (users -> *) -->
+  <!-- users -> gunungs -->
+  <path d="M 260 160 L 310 160" stroke="#06b6d4" stroke-width="1.5" fill="none" marker-end="url(#crowfoot-admin)" />
+  <!-- users -> activity_logs -->
+  <path d="M 150 320 L 150 380" stroke="#06b6d4" stroke-width="2" fill="none" marker-end="url(#crowfoot-admin)" />
+  <!-- users -> kriterias -->
+  <path d="M 150 120 L 150 90 L 690 90 L 690 120" stroke="#06b6d4" stroke-width="1.5" fill="none" marker-end="url(#crowfoot-admin)" />
+  <!-- users -> terminals -->
+  <path d="M 130 120 L 130 80 L 960 80 L 960 120" stroke="#06b6d4" stroke-width="1.5" fill="none" marker-end="url(#crowfoot-admin)" />
+  <!-- users -> jalurs -->
+  <path d="M 110 320 L 110 500 L 310 500" stroke="#06b6d4" stroke-width="1.5" fill="none" marker-end="url(#crowfoot-admin)" />
+  <!-- users -> biayas -->
+  <path d="M 90 320 L 90 730 L 1050 730 L 1050 650" stroke="#06b6d4" stroke-width="1.5" fill="none" marker-end="url(#crowfoot-admin)" />
+  <!-- users -> penilaians -->
+  <path d="M 70 320 L 70 760 L 690 760 L 690 780" stroke="#06b6d4" stroke-width="1.5" fill="none" marker-end="url(#crowfoot-admin)" />
+</svg>

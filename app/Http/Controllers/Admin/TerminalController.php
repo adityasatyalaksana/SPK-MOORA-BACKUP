@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Terminal;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class TerminalController extends Controller
@@ -27,7 +28,10 @@ class TerminalController extends Controller
         $terminal->nama_terminal = $request->nama_terminal;
         $terminal->lokasi = $request->lokasi;
         $terminal->tipe = $request->tipe;
+        $terminal->user_id = auth()->id();
         $terminal->save();
+
+        ActivityLog::log("Menambahkan data Terminal " . $terminal->nama_terminal);
 
         return redirect()->route('admin.terminal.index')->with('success', 'Data Terminal berhasil ditambahkan!');
     }
@@ -44,7 +48,10 @@ class TerminalController extends Controller
         $terminal->nama_terminal = $request->nama_terminal;
         $terminal->lokasi = $request->lokasi;
         $terminal->tipe = $request->tipe;
+        $terminal->user_id = auth()->id();
         $terminal->save();
+
+        ActivityLog::log("Mengubah data Terminal " . $terminal->nama_terminal);
 
         return redirect()->route('admin.terminal.index')->with('success', 'Data Terminal berhasil diperbarui!');
     }
@@ -53,6 +60,7 @@ class TerminalController extends Controller
     {
         $terminal = Terminal::findOrFail($id);
         $terminal->delete();
+        ActivityLog::log("Menghapus data Terminal " . $terminal->nama_terminal);
 
         return redirect()->route('admin.terminal.index')->with('success', 'Data Terminal berhasil dihapus!');
     }

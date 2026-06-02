@@ -10,6 +10,7 @@ class Biaya extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'jalur_id', // Pastikan jalur_id ada di fillable
         'start_terminal_id', 
         'end_terminal_id', 
@@ -21,6 +22,11 @@ class Biaya extends Model
         'end_date', 
         'harga_periode'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     // Relasi ke Jalur (Penting untuk filter di halaman penilaian)
     public function jalur()

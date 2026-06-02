@@ -19,7 +19,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'username',
         'password',
     ];
 
@@ -45,4 +45,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function gunungs() { return $this->hasMany(Gunung::class, 'user_id'); }
+    public function terminals() { return $this->hasMany(Terminal::class, 'user_id'); }
+    public function jalurs() { return $this->hasMany(Jalur::class, 'user_id'); }
+    public function biayas() { return $this->hasMany(Biaya::class, 'user_id'); }
+    public function kriterias() { return $this->hasMany(Kriteria::class, 'user_id'); }
+    public function penilaians() { return $this->hasMany(Penilaian::class, 'user_id'); }
+    public function activityLogs() { return $this->hasMany(ActivityLog::class, 'user_id'); }
 }

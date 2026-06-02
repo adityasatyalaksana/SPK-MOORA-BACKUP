@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SubKriteria;
 use App\Models\Kriteria;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class SubKriteriaController extends Controller
@@ -24,7 +25,8 @@ class SubKriteriaController extends Controller
             'bobot'       => 'required|numeric',
         ]);
 
-        SubKriteria::create($request->all());
+        $sub = SubKriteria::create($request->all());
+        ActivityLog::log("Menambahkan Sub-Kriteria " . $sub->nama_sub . " pada " . ($sub->kriteria->nama_kriteria ?? ''));
         return back()->with('success', 'Sub-Kriteria berhasil ditambahkan!');
     }
 
@@ -38,12 +40,15 @@ class SubKriteriaController extends Controller
 
         $subKriteria = SubKriteria::findOrFail($id);
         $subKriteria->update($request->all());
+        ActivityLog::log("Mengubah Sub-Kriteria " . $subKriteria->nama_sub);
         return back()->with('success', 'Sub-Kriteria berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
-        SubKriteria::findOrFail($id)->delete();
+        $subKriteria = SubKriteria::findOrFail($id);
+        $subKriteria->delete();
+        ActivityLog::log("Menghapus Sub-Kriteria " . $subKriteria->nama_sub);
         return back()->with('success', 'Sub-Kriteria berhasil dihapus!');
     }
 }

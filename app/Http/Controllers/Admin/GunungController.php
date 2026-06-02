@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gunung;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,7 +42,10 @@ class GunungController extends Controller
         }
 
         $data['gambar'] = $storedImages;
-        Gunung::create($data);
+        $data['user_id'] = auth()->id();
+        $gunung = Gunung::create($data);
+
+        ActivityLog::log("Menambahkan data Gunung " . $gunung->nama_gunung);
 
         return redirect()->route('admin.gunung.index')->with('success', 'Data Gunung dan Galeri berhasil disimpan!');
     }
@@ -77,6 +81,7 @@ class GunungController extends Controller
         }
 
         $gunung->update($data);
+        ActivityLog::log("Mengubah data Gunung " . $gunung->nama_gunung);
         return redirect()->route('admin.gunung.index')->with('success', 'Data Gunung berhasil diperbarui!');
     }
 
@@ -89,6 +94,7 @@ class GunungController extends Controller
             }
         }
         $gunung->delete();
+        ActivityLog::log("Menghapus data Gunung " . $gunung->nama_gunung);
         return redirect()->route('admin.gunung.index')->with('success', 'Data Gunung berhasil dihapus!');
     }
 

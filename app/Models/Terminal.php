@@ -10,5 +10,10 @@ class Terminal extends Model
     use HasFactory;
 
     // Tambahkan baris ini untuk menentukan kolom mana saja yang boleh diisi
-    protected $fillable = ['nama_terminal', 'lokasi'];
+    protected $fillable = ['user_id', 'nama_terminal', 'lokasi'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

@@ -37,7 +37,7 @@
                         <tr>
                             <th class="ps-4" width="5%">No</th>
                             <th>Nama Lengkap</th>
-                            <th>Email</th>
+                            <th>Username</th>
                             <th>Tanggal Terdaftar</th>
                             <th class="text-center" width="15%">Aksi</th>
                         </tr>
@@ -61,7 +61,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="text-secondary">{{ $user->email }}</td>
+                            <td class="text-secondary">{{ $user->username }}</td>
                             <td class="text-secondary">{{ $user->created_at->format('d M Y') }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2">

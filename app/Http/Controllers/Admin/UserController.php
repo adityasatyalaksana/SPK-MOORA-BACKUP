@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,16 +25,17 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'username' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:3|confirmed',
         ]);
 
-        // Karena di Model sudah ada 'password' => 'hashed', tidak perlu Hash::make lagi
-        User::create([
+        $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'username' => $request->username,
             'password' => $request->password,
         ]);
+
+        ActivityLog::log("Menambahkan user " . $user->username);
 
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
     }
@@ -50,18 +52,20 @@ class UserController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'username' => 'required|string|max:255|unique:users,username,'.$user->id,
             'password' => 'nullable|string|min:3|confirmed',
         ]);
 
         $user->name = $request->name;
-        $user->email = $request->email;
+        $user->username = $request->username;
         
         if ($request->filled('password')) {
             $user->password = $request->password;
         }
 
         $user->save();
+
+        ActivityLog::log("Mengubah data user " . $user->username);
 
         return redirect()->route('users.index')->with('success', 'User berhasil diperbarui.');
     }
@@ -72,7 +76,11 @@ class UserController extends Controller
         if ($user->id === Auth::id()) {
             return back()->with('error', 'Anda tidak bisa menghapus akun sendiri!');
         }
+        $username = $user->username;
         $user->delete();
+
+        ActivityLog::log("Menghapus user " . $username);
+
         return back()->with('success', 'User berhasil dihapus.');
     }
 }

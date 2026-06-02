@@ -13,7 +13,7 @@ class AuthController extends Controller
 
     public function login(Request $request) {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required'
         ]);
 
@@ -22,7 +22,7 @@ class AuthController extends Controller
             return redirect()->intended('/admin/dashboard');
         }
 
-        return back()->with('loginError', 'Login Gagal! Email atau password salah.');
+        return back()->with('loginError', 'Login Gagal! Username atau password salah.');
     }
 
     public function logout() {

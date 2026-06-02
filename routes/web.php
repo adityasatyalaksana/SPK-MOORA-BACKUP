@@ -19,7 +19,8 @@ use App\Http\Controllers\Admin\{
     SubKriteriaController,
     PenilaianController,
     HasilController,
-    UserController
+    UserController,
+    ActivityLogController
 };
 
 /*
@@ -120,5 +121,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'update'  => 'users.update',
         'destroy' => 'users.destroy',
     ]);
+
+    // 9. Log Aktivitas
+    Route::get('/logs', [ActivityLogController::class, 'index'])->name('admin.logs.index');
 
 });
