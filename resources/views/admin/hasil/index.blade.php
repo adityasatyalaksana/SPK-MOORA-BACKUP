@@ -64,6 +64,26 @@
         #sidebar, .d-print-none {
             display: none !important;
         }
+        .wrapper {
+            display: block !important;
+            height: auto !important;
+            min-height: 0 !important;
+        }
+        .main-container {
+            display: block !important;
+            height: auto !important;
+            min-height: 0 !important;
+            width: 100% !important;
+        }
+        .table-responsive {
+            display: block !important;
+            overflow: visible !important;
+            width: 100% !important;
+        }
+        tr {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
         .collapse {
             display: block !important;
             height: auto !important;
@@ -109,7 +129,6 @@
         .premium-card {
             box-shadow: none !important;
             border: 1px solid #cbd5e1 !important;
-            page-break-inside: avoid;
         }
         .premium-table th {
             background-color: #0f172a !important;
@@ -156,7 +175,7 @@
     <div class="p-4 mb-4 hasil-header shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
             <h3 class="fw-bold m-0"><i class="bi bi-calculator me-2"></i>Hasil Perhitungan SPK (Metode MOORA)</h3>
-            <p class="opacity-75 small m-0 mt-1">Pemeringkatan rute pendakian & armada bus berdasarkan optimasi kriteria keuntungan (Benefit) dan biaya (Cost).</p>
+            <p class="opacity-75 small m-0 mt-1">Pemeringkatan rute pendakian dan armada bus berdasarkan optimasi kriteria keuntungan (Benefit) dan biaya (Cost).</p>
         </div>
         <div class="d-flex align-items-center gap-3">
             <button onclick="window.print()" class="btn btn-light text-dark fw-bold shadow-sm d-print-none px-3 py-2" style="border-radius: 10px;">
@@ -174,7 +193,7 @@
         <div class="card-header bg-dark text-white py-3 border-0 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold d-flex align-items-center">
                 <i class="bi bi-trophy-fill text-warning me-2" style="font-size: 1.25rem;"></i>
-                Hasil Akhir & Rekomendasi Ranking Rute
+                Hasil Akhir dan Rekomendasi Peringkat Rute
             </h6>
             <span class="badge bg-success px-3 py-1.5" style="border-radius: 8px;">Final MOORA preferred</span>
         </div>
@@ -184,7 +203,7 @@
                     <thead class="bg-slate text-white" style="background-color: #0f172a;">
                         <tr class="text-center">
                             <th class="py-3 ps-4" style="width: 15%;">Peringkat</th>
-                            <th class="py-3 text-start" style="width: 35%;">Alternatif Rute & Armada</th>
+                            <th class="py-3 text-start" style="width: 35%;">Alternatif Rute dan Armada</th>
                             <th class="py-3" style="width: 15%;">Total Benefit (Σ Max)</th>
                             <th class="py-3" style="width: 15%;">Total Cost (Σ Min)</th>
                             <th class="py-3" style="width: 15%;">Skor Akhir (Yi)</th>
@@ -196,13 +215,13 @@
                             // Set custom classes for top 3 ranks
                             if($index == 0) {
                                 $rankClass = 'rank-gold';
-                                $rankText = '🏆 Juara 1';
+                                $rankText = '🏆 Peringkat 1';
                             } elseif($index == 1) {
                                 $rankClass = 'rank-silver';
-                                $rankText = '🥈 Juara 2';
+                                $rankText = '🥈 Peringkat 2';
                             } elseif($index == 2) {
                                 $rankClass = 'rank-bronze';
-                                $rankText = '🥉 Juara 3';
+                                $rankText = '🥉 Peringkat 3';
                             } else {
                                 $rankClass = 'rank-normal';
                                 $rankText = '#' . ($index + 1);
@@ -238,7 +257,7 @@
                         <tr>
                             <td colspan="5" class="text-center py-5 text-muted">
                                 <i class="bi bi-clipboard-x d-block mb-2" style="font-size: 2.5rem;"></i>
-                                Belum ada data penilaian alternatif untuk dikalkulasi. Silakan isi data di menu Penilaian.
+                                Belum ada data penilaian alternatif untuk dihitung. Silakan lengkapi data pada menu Penilaian.
                             </td>
                         </tr>
                         @endforelse
@@ -248,13 +267,13 @@
             
             <div class="p-4 bg-light border-top">
                 <div class="p-3 bg-white rounded-3 border-start border-4 border-primary shadow-xs">
-                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-question-circle-fill text-primary me-2"></i>Bagaimana Cara Membaca Hasil Ini?</h6>
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-question-circle-fill text-primary me-2"></i>Bagaimana Cara Membaca Hasil Perhitungan Ini?</h6>
                     <p class="mb-0 small text-muted">
-                        *   <strong>Total Benefit (Σ Max)</strong>: Akumulasi nilai keuntungan (seperti <em>Ketinggian Gunung</em>). Semakin tinggi nilainya, semakin baik alternatif tersebut.
+                        *   <strong>Total Benefit (Σ Max)</strong>: Akumulasi nilai keuntungan (seperti <em>ketinggian gunung</em>). Semakin tinggi nilai tersebut, semakin baik alternatif yang bersangkutan.
                         <br>
-                        *   <strong>Total Cost (Σ Min)</strong>: Akumulasi nilai pengeluaran/beban (seperti <em>Biaya Simaksi, Harga Tiket Bus, Tingkat Kesulitan, dan Durasi Perjalanan</em>). Semakin rendah nilainya, semakin baik alternatif tersebut.
+                        *   <strong>Total Cost (Σ Min)</strong>: Akumulasi nilai pengeluaran atau beban (seperti <em>biaya simaksi, tarif bus, tingkat kesulitan, dan durasi perjalanan</em>). Semakin rendah nilai tersebut, semakin baik alternatif yang bersangkutan.
                         <br>
-                        *   <strong>Skor Akhir (Yi)</strong>: Selisih antara Benefit dan Cost <code>(Benefit - Cost)</code>. Alternatif dengan <strong>Skor Akhir tertinggi (Peringkat 1)</strong> merupakan pilihan pendakian paling optimal untuk Anda.
+                        *   <strong>Skor Akhir (Yi)</strong>: Selisih antara Benefit dan Cost <code>(Benefit - Cost)</code>. Alternatif dengan <strong>Skor Akhir tertinggi (Peringkat 1)</strong> merupakan pilihan alternatif pendakian yang paling optimal.
                     </p>
                 </div>
             </div>
@@ -263,7 +282,7 @@
 
     <!-- EXPLANATORY COLLAPSIBLE STEPS (Math Steps, Collapsed by default) -->
     <div class="mb-4">
-        <h5 class="fw-bold text-dark mb-3 d-print-none"><i class="bi bi-chevron-expand me-2 text-primary"></i>Langkah-Langkah Detail Perhitungan MOORA</h5>
+        <h5 class="fw-bold text-dark mb-3 d-print-none"><i class="bi bi-chevron-expand me-2 text-primary"></i>Tahapan Rinci Perhitungan MOORA</h5>
         
         <div class="accordion" id="accordionCalculation">
             
@@ -279,14 +298,14 @@
                     <div class="accordion-body p-0">
                         <div class="p-3 bg-light border-bottom">
                             <p class="mb-0 small text-muted">
-                                <strong>Penjelasan</strong>: Matriks keputusan adalah tabel nilai mentah dari parameter alternatif yang sudah Anda input pada halaman Penilaian. Setiap alternatif dinilai dari kriteria C1 s/d C6 dengan bobot skor 1 s/d 5.
+                                <strong>Penjelasan</strong>: Matriks keputusan merupakan tabel nilai mentah dari parameter alternatif yang telah dimasukkan pada halaman Penilaian. Setiap alternatif dinilai berdasarkan kriteria C1 sampai dengan C6 dengan rentang skor 1 sampai dengan 5.
                             </p>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle premium-table mb-0">
                                 <thead class="bg-dark text-white">
                                     <tr class="text-center">
-                                        <th class="py-3 text-start ps-4" style="width: 40%;">Alternatif Rute & Armada</th>
+                                        <th class="py-3 text-start ps-4" style="width: 40%;">Alternatif Rute dan Armada</th>
                                         @foreach($kriterias as $k)
                                             <th class="py-3">{{ $k->kode_kriteria }}<br><small class="text-muted" style="font-size: 0.7rem;">({{ ucfirst($k->tipe) }})</small></th>
                                         @endforeach
@@ -322,7 +341,7 @@
                 <div id="collapseStepTwo" class="accordion-collapse collapse" data-parent="#accordionCalculation">
                     <div class="accordion-body p-4">
                         <p class="small text-muted">
-                            <strong>Penjelasan</strong>: Karena masing-masing kriteria memiliki satuan yang berbeda (contoh: Ketinggian dalam MDPL, Tiket Bus dalam Rupiah, Kesulitan dalam teks), kita harus menormalkan datanya ke skala decimal 0-1 agar bisa dibandingkan secara adil.
+                            <strong>Penjelasan</strong>: Oleh karena setiap kriteria memiliki satuan yang berbeda (contoh: ketinggian dalam mdpl, tarif bus dalam Rupiah, dan tingkat kesulitan dalam teks), data tersebut perlu dinormalisasi ke skala desimal 0 sampai dengan 1 agar dapat dibandingkan secara objektif.
                             <br>
                             <strong>Rumus Pembagi Kriteria</strong>: Akar dari jumlah kuadrat seluruh nilai kriteria pada tabel pertama (Matriks Keputusan).
                         </p>
@@ -360,14 +379,14 @@
                     <div class="accordion-body p-0">
                         <div class="p-3 bg-light border-bottom">
                             <p class="mb-0 small text-muted">
-                                <strong>Penjelasan</strong>: Nilai parameter awal dari tabel pertama dibagi dengan nilai Pembagi Kriteria (Langkah 2) untuk menghasilkan matriks ternormalisasi. Kemudian, hasilnya dikalikan dengan bobot kriteria masing-masing agar menghasilkan <strong>Nilai Terbobot</strong> di bawah ini.
+                                <strong>Penjelasan</strong>: Nilai parameter awal dari tabel pertama dibagi dengan nilai Pembagi Kriteria (Langkah 2) untuk menghasilkan matriks ternormalisasi. Selanjutnya, hasil pembagian tersebut dikalikan dengan bobot masing-masing kriteria untuk menghasilkan <strong>Nilai Terbobot</strong> sebagai berikut.
                             </p>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle premium-table mb-0">
                                 <thead class="bg-dark text-white">
                                     <tr class="text-center">
-                                        <th class="py-3 text-start ps-4" style="width: 40%;">Alternatif Rute & Armada</th>
+                                        <th class="py-3 text-start ps-4" style="width: 40%;">Alternatif Rute dan Armada</th>
                                         @foreach($kriterias as $k)
                                             <th class="py-3">{{ $k->kode_kriteria }}<br><small class="text-muted" style="font-size: 0.7rem;">(Bobot: {{ $k->bobot }})</small></th>
                                         @endforeach

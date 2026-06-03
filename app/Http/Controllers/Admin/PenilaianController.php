@@ -20,7 +20,7 @@ class PenilaianController extends Controller
         ])->get();
         
         $jalurs = Jalur::with('gunung')->get();
-        $biayas = Biaya::with(['start_terminal', 'end_terminal'])->get();
+        $biayas = Biaya::with(['start_terminal', 'end_terminal', 'jalur.gunung'])->get();
 
         return view('admin.penilaian.index', compact('kriterias', 'penilaians', 'jalurs', 'biayas'));
     }

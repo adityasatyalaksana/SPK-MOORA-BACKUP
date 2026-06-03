@@ -222,7 +222,7 @@
                                          @empty
                                              <tr>
                                                  <td colspan="3" class="text-center text-muted small py-4">
-                                                     <i class="bi bi-exclamation-circle me-1"></i> Data opsi jalur resmi belum diinput.
+                                                     <i class="bi bi-exclamation-circle me-1"></i> Data opsi jalur resmi belum dimasukkan.
                                                  </td>
                                              </tr>
                                          @endforelse

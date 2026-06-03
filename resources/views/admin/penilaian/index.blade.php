@@ -21,6 +21,8 @@
         vertical-align: middle;
         padding: 16px 12px;
         border-bottom: none;
+        background-color: #0f172a;
+        color: #ffffff;
     }
     .assessment-table td {
         vertical-align: middle;
@@ -136,7 +138,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="fw-bold text-dark mb-1">Matriks Keputusan (Penilaian Alternatif)</h4>
-            <p class="text-muted small mb-0">Petakan bobot penilaian sub-kriteria untuk masing-masing alternatif jalur dan biaya.</p>
+            <p class="text-muted small mb-0">Petakan bobot penilaian sub-kriteria untuk setiap alternatif jalur dan biaya.</p>
         </div>
         <button class="btn btn-primary shadow-sm px-4 py-2" style="border-radius: 10px; font-weight: 600;" data-bs-toggle="modal" data-bs-target="#modalTambah">
             <i class="bi bi-plus-lg me-2"></i>Tambah Penilaian
@@ -154,17 +156,17 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle assessment-table">
-                    <thead class="bg-dark text-white">
+                    <thead class="text-white">
                         <tr>
                             <th class="ps-4 text-center" width="5%">No</th>
-                            <th class="ps-3" style="background: #0f172a; color: #ffffff;">Alternatif Rute & Armada</th>
+                            <th class="ps-3">Alternatif Rute dan Armada</th>
                             @foreach($kriterias as $k)
-                                <th class="text-center text-white" style="background: #1e293b; min-width: 140px;">
+                                <th class="text-center" style="min-width: 140px;">
                                     <div class="fw-bold">{{ $k->kode_kriteria }}</div>
                                     <div class="text-muted small fw-normal" style="font-size: 0.7rem; color: #94a3b8 !important;">{{ $k->nama_kriteria }}</div>
                                 </th>
                             @endforeach
-                            <th class="text-center bg-secondary text-white" width="10%">Aksi</th>
+                            <th class="text-center" width="10%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -410,7 +412,8 @@
                                         @endphp
                                         <div class="dropdown-item-card p-3 mb-2 rounded-3" 
                                              data-id="{{ $b->id }}" 
-                                             data-search="{{ strtolower($b->nama_armada) }} {{ strtolower($cleanStart) }} {{ strtolower($cleanEnd) }}"
+                                             data-jalur-id="{{ $b->jalur_id }}"
+                                             data-search="{{ strtolower($b->nama_armada) }} {{ strtolower($cleanStart) }} {{ strtolower($cleanEnd) }} {{ strtolower($b->jalur->gunung->nama_gunung ?? '') }} {{ strtolower($b->jalur->nama_jalur ?? '') }}"
                                              data-harga="Rp {{ number_format($b->harga_pp, 0, ',', '.') }}"
                                              data-estimasi="{{ $b->estimasi_perjalanan }} Jam"
                                              data-armada="{{ $b->nama_armada }}"
@@ -422,6 +425,11 @@
                                                     <span class="text-muted small" style="font-size: 0.75rem;">
                                                         {{ $cleanStart }} &rarr; {{ $cleanEnd }}
                                                     </span>
+                                                    @if($b->jalur)
+                                                        <span class="d-block text-primary small fw-semibold mt-1" style="font-size: 0.72rem;">
+                                                            <i class="bi bi-geo-alt-fill me-1"></i>Untuk: Gn. {{ $b->jalur->gunung->nama_gunung ?? '-' }} ({{ $b->jalur->nama_jalur ?? '-' }})
+                                                        </span>
+                                                    @endif
                                                 </div>
                                                 <div class="d-flex flex-wrap gap-1 justify-content-end align-items-center">
                                                     <span class="badge bg-success text-white fw-bold" style="font-size: 0.75rem;">Rp {{ number_format($b->harga_pp, 0, ',', '.') }}</span>
@@ -473,49 +481,42 @@
 
         function updateDropdownStates() {
             const selectedJalurId = document.getElementById('selected-jalur-id').value;
-            const selectedBiayaId = document.getElementById('selected-biaya-id').value;
 
-            // Update Jalur dropdown items based on selectedBiayaId
+            // Update Jalur dropdown items: hide if already has ANY assessment
             const jalurItems = document.querySelectorAll('#jalur-dropdown-menu .dropdown-item-card');
             jalurItems.forEach(item => {
                 const jId = item.getAttribute('data-id');
-                const key = jId + '-' + selectedBiayaId;
+                const hasAnyAssessment = existingAssessments.some(k => k.startsWith(jId + '-'));
                 
-                // Clear any existing badges first
-                const existingBadge = item.querySelector('.already-assessed-badge');
-                if (existingBadge) existingBadge.remove();
-                item.classList.remove('opacity-50');
-                item.style.pointerEvents = 'auto';
-
-                if (selectedBiayaId && existingAssessments.includes(key)) {
-                    item.classList.add('opacity-50');
-                    item.style.pointerEvents = 'none';
-                    const badgeContainer = item.querySelector('.justify-content-end');
-                    if (badgeContainer) {
-                        badgeContainer.insertAdjacentHTML('beforeend', '<span class="badge bg-danger text-white already-assessed-badge" style="font-size: 0.7rem;"><i class="bi bi-exclamation-circle-fill me-1"></i>Sudah Dinilai</span>');
-                    }
+                if (hasAnyAssessment) {
+                    item.style.setProperty('display', 'none', 'important');
+                } else {
+                    item.style.setProperty('display', 'block', 'important');
                 }
             });
 
-            // Update Biaya dropdown items based on selectedJalurId
+            // Update Biaya dropdown items: hide if combination is already assessed or doesn't match selectedJalurId
             const biayaItems = document.querySelectorAll('#biaya-dropdown-menu .dropdown-item-card');
             biayaItems.forEach(item => {
                 const bId = item.getAttribute('data-id');
-                const key = selectedJalurId + '-' + bId;
+                const bJalurId = item.getAttribute('data-jalur-id');
+                const key = bJalurId + '-' + bId;
 
-                // Clear any existing badges first
-                const existingBadge = item.querySelector('.already-assessed-badge');
-                if (existingBadge) existingBadge.remove();
-                item.classList.remove('opacity-50');
-                item.style.pointerEvents = 'auto';
+                // Hide if already assessed
+                if (existingAssessments.includes(key)) {
+                    item.style.setProperty('display', 'none', 'important');
+                    return;
+                }
 
-                if (selectedJalurId && existingAssessments.includes(key)) {
-                    item.classList.add('opacity-50');
-                    item.style.pointerEvents = 'none';
-                    const badgeContainer = item.querySelector('.justify-content-end');
-                    if (badgeContainer) {
-                        badgeContainer.insertAdjacentHTML('beforeend', '<span class="badge bg-danger text-white already-assessed-badge ms-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle-fill me-1"></i>Sudah Dinilai</span>');
+                // Filter by selectedJalurId
+                if (selectedJalurId) {
+                    if (bJalurId !== selectedJalurId) {
+                        item.style.setProperty('display', 'none', 'important');
+                    } else {
+                        item.style.setProperty('display', 'block', 'important');
                     }
+                } else {
+                    item.style.setProperty('display', 'block', 'important');
                 }
             });
         }
@@ -565,6 +566,30 @@
 
                     // Update inline value helpers next to sub-criteria dropdowns
                     if (type === 'jalur') {
+                        // Clear selected biaya if it doesn't match the new jalur selection
+                        const selectedBiayaInput = document.getElementById('selected-biaya-id');
+                        const selectedBiayaId = selectedBiayaInput.value;
+                        if (selectedBiayaId) {
+                            const currentSelectedBiaya = document.querySelector(`#biaya-dropdown-menu .dropdown-item-card[data-id="${selectedBiayaId}"]`);
+                            if (currentSelectedBiaya) {
+                                const bJalurId = currentSelectedBiaya.getAttribute('data-jalur-id');
+                                if (bJalurId !== hiddenInput.value) {
+                                    // Reset biaya selection
+                                    selectedBiayaInput.value = '';
+                                    const biayaLabel = document.getElementById('biaya-dropdown-label');
+                                    biayaLabel.innerHTML = '-- Pilih Armada Bus --';
+                                    biayaLabel.classList.add('text-muted');
+                                    currentSelectedBiaya.classList.remove('selected');
+                                    
+                                    // Hide helpers C2 and C5
+                                    const valC2 = document.getElementById('val-C2');
+                                    if (valC2) valC2.classList.add('d-none');
+                                    const valC5 = document.getElementById('val-C5');
+                                    if (valC5) valC5.classList.add('d-none');
+                                }
+                            }
+                        }
+
                         // C1: Biaya Simaksi
                         const valC1 = document.getElementById('val-C1');
                         valC1.textContent = item.getAttribute('data-simaksi');
@@ -607,8 +632,35 @@
             // Handle search filtering
             searchInput.addEventListener('input', function() {
                 const query = searchInput.value.toLowerCase().trim();
+                const selectedJalurId = document.getElementById('selected-jalur-id').value;
                 items.forEach(function(item) {
                     const searchData = item.getAttribute('data-search');
+                    
+                    if (type === 'jalur') {
+                        const jId = item.getAttribute('data-id');
+                        const hasAnyAssessment = existingAssessments.some(k => k.startsWith(jId + '-'));
+                        if (hasAnyAssessment) {
+                            item.style.setProperty('display', 'none', 'important');
+                            return;
+                        }
+                    }
+
+                    if (type === 'biaya') {
+                        const bId = item.getAttribute('data-id');
+                        const bJalurId = item.getAttribute('data-jalur-id');
+                        const key = bJalurId + '-' + bId;
+
+                        if (existingAssessments.includes(key)) {
+                            item.style.setProperty('display', 'none', 'important');
+                            return;
+                        }
+
+                        if (selectedJalurId && bJalurId !== selectedJalurId) {
+                            item.style.setProperty('display', 'none', 'important');
+                            return;
+                        }
+                    }
+
                     if (searchData.includes(query)) {
                         item.style.setProperty('display', 'block', 'important');
                     } else {
@@ -620,6 +672,7 @@
 
         initCustomDropdown('jalur');
         initCustomDropdown('biaya');
+        updateDropdownStates();
 
         // Form Submit Validation
         const form = document.querySelector('#modalTambah form');

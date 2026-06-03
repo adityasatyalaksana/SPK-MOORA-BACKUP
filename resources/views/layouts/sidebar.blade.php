@@ -9,14 +9,14 @@
     }
 </style>
 
-<div id="sidebar" class="bg-dark text-white shadow" style="min-width: 280px; height: 100vh; position: sticky; top: 0; overflow-y: auto; align-self: flex-start;">
+<div id="sidebar" class="bg-dark text-white shadow">
     <div class="p-4 d-flex flex-column h-100">
-        <div class="text-center mb-4">
+        <div class="text-center mb-4 flex-shrink-0">
             <h4 class="fw-bold mt-2 mb-0" style="letter-spacing: 2px;">SPK MOORA</h4>
             <hr class="border-secondary mt-3">
         </div>
         
-        <ul class="nav nav-pills flex-column mb-auto">
+        <ul class="nav nav-pills flex-column sidebar-menu-list mb-3">
             
             <div class="small text-uppercase text-secondary fw-bold mb-2 px-3" style="font-size: 0.75rem; letter-spacing: 1px;">Menu Utama</div>
             
@@ -126,24 +126,24 @@
             @endauth
         </ul>
 
-        <div class="mt-auto pt-4 border-top border-secondary">
+        <div class="mt-auto pt-4 border-top border-secondary flex-shrink-0 mb-3">
             @auth
-                <div class="d-flex align-items-center justify-content-between p-2.5 rounded shadow-sm" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08);">
+                <div class="d-flex align-items-center justify-content-between premium-profile-card">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="d-flex align-items-center justify-content-center bg-success text-white fw-bold rounded-circle shadow-sm" style="width: 40px; height: 40px; font-size: 1.1rem; flex-shrink: 0;">
+                        <div class="profile-avatar-gradient">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </div>
                         <div class="text-start" style="line-height: 1.25;">
-                            <span class="d-block fw-bold text-white small text-truncate" style="max-width: 135px;" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
-                            <span class="badge bg-success-subtle text-success border border-success-subtle fw-semibold mt-1" style="font-size: 0.65rem; border-radius: 6px; padding: 2px 6px;">
+                            <span class="d-block profile-name-text text-truncate" style="max-width: 135px;" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
+                            <span class="profile-role-badge mt-1">
                                 {{ auth()->user()->role->name ?? 'User' }}
                             </span>
                         </div>
                     </div>
                     <form action="/logout" method="POST" class="m-0">
                         @csrf
-                        <button type="submit" class="btn btn-link text-danger p-2 border-0 d-flex align-items-center justify-content-center" style="border-radius: 8px; background-color: rgba(220, 53, 69, 0.1);" title="Logout dari Sistem">
-                            <i class="bi bi-power" style="font-size: 1.2rem;"></i>
+                        <button type="submit" class="btn btn-logout-premium" title="Logout dari Sistem">
+                            <i class="bi bi-power" style="font-size: 1.1rem;"></i>
                         </button>
                     </form>
                 </div>
