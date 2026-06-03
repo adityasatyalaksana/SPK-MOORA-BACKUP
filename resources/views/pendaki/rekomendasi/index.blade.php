@@ -91,6 +91,16 @@
         letter-spacing: 0.5px;
     }
 
+    /* Custom Dropdown Overrides */
+    .dropdown-btn-custom:focus, .dropdown-btn-custom.open-dropdown {
+        border-color: #10b981 !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
+    }
+    .dropdown-btn-custom.open-dropdown i.bi-geo-alt {
+        color: #10b981 !important;
+    }
+
     /* Button Animations */
     .btn-search-custom {
         background: linear-gradient(90deg, #10b981 0%, #059669 100%);
@@ -148,10 +158,11 @@
                         <label class="field-label">Budget Maksimal Kelompok (Rp)</label>
                         <div class="custom-input-group">
                             <i class="bi bi-wallet2"></i>
-                            <input type="number" 
-                                   name="budget" 
+                            <input type="hidden" name="budget" id="budget-hidden">
+                            <input type="text" 
+                                   id="budget-display" 
                                    class="form-control form-control-custom" 
-                                   placeholder="Contoh: 1500000" 
+                                   placeholder="Contoh: 1.500.000" 
                                    required>
                         </div>
                         <small class="text-muted ms-2" style="font-size: 0.75rem;">Total alokasi biaya untuk seluruh anggota.</small>
@@ -172,19 +183,39 @@
                         <small class="text-muted ms-2" style="font-size: 0.75rem;">Termasuk Anda sendiri sebagai ketua/anggota.</small>
                     </div>
 
-                    {{-- Input 3: Terminal Keberangkatan --}}
-                    <div class="col-md-6">
+                    {{-- Input 3: Terminal Keberangkatan (Custom Searchable Dropdown) --}}
+                    <div class="col-md-6 position-relative">
                         <label class="field-label">Terminal Keberangkatan Asal</label>
-                        <div class="custom-input-group">
-                            <i class="bi bi-geo-alt"></i>
-                            <select name="terminal_id" class="form-select form-control-custom" required>
-                                <option value="" disabled selected>-- Pilih Terminal Asal Bus --</option>
+                        <input type="hidden" name="terminal_id" id="selected-terminal-id" required>
+                        
+                        <button type="button" class="btn dropdown-btn-custom text-start d-flex justify-content-between align-items-center w-100" id="terminal-dropdown-btn" style="padding: 14px 18px 14px 50px !important; border: 2px solid #e2e8f0 !important; border-radius: 16px !important; background-color: #f8fafc; font-weight: 500; position: relative;">
+                            <i class="bi bi-geo-alt" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.2rem;"></i>
+                            <span id="terminal-dropdown-label" class="text-muted small">-- Pilih Terminal Asal Bus --</span>
+                            <i class="bi bi-chevron-down text-secondary"></i>
+                        </button>
+                        
+                        <div class="custom-dropdown-menu d-none position-absolute bg-white shadow-lg border rounded-3 p-3 mt-1" id="terminal-dropdown-menu" style="z-index: 1050; left: 12px; right: 12px; max-height: 280px; overflow-y: auto;">
+                            <input type="text" class="form-control mb-3 search-input" placeholder="Cari terminal keberangkatan...">
+                            <div class="dropdown-list-items">
                                 @foreach($terminals as $terminal)
-                                    <option value="{{ $terminal->id }}">{{ $terminal->nama_terminal }}</option>
+                                    @php
+                                        $cleanName = str_ireplace('Terminal ', '', $terminal->nama_terminal);
+                                    @endphp
+                                    <div class="dropdown-item-card p-3 mb-2 rounded-3" 
+                                         data-id="{{ $terminal->id }}" 
+                                         data-search="{{ strtolower($cleanName) }} {{ strtolower($terminal->lokasi) }}">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="fw-bold text-dark d-block"><i class="bi bi-geo-alt-fill text-danger me-2"></i>{{ $terminal->nama_terminal }}</span>
+                                                <span class="text-muted small"><i class="bi bi-map me-1"></i>{{ $terminal->lokasi }}</span>
+                                            </div>
+                                            <span class="badge bg-primary-subtle text-primary">{{ $terminal->tipe }}</span>
+                                        </div>
+                                    </div>
                                 @endforeach
-                            </select>
+                            </div>
                         </div>
-                        <small class="text-muted ms-2" style="font-size: 0.75rem;">Lokasi titik kumpul keberangkatan armada bus.</small>
+                        <small class="text-muted ms-2 mt-1 d-block" style="font-size: 0.75rem;">Lokasi titik kumpul keberangkatan armada bus.</small>
                     </div>
 
                     {{-- Input 4: Tanggal Keberangkatan (Diberi Batasan Min Tanggal Hari Ini) --}}
@@ -215,4 +246,127 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const budgetDisplay = document.getElementById('budget-display');
+        const budgetHidden = document.getElementById('budget-hidden');
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function updateValues() {
+            // Remove all non-digits
+            let rawValue = budgetDisplay.value.replace(/\D/g, '');
+            budgetHidden.value = rawValue;
+            
+            if (rawValue) {
+                budgetDisplay.value = formatNumber(rawValue);
+            } else {
+                budgetDisplay.value = '';
+            }
+        }
+
+        budgetDisplay.addEventListener('input', updateValues);
+
+        // Custom Dropdown Terminal Logic
+        const termBtn = document.getElementById('terminal-dropdown-btn');
+        const termLabel = document.getElementById('terminal-dropdown-label');
+        const termMenu = document.getElementById('terminal-dropdown-menu');
+        const termHiddenInput = document.getElementById('selected-terminal-id');
+        const termSearchInput = termMenu.querySelector('.search-input');
+        const termItems = termMenu.querySelectorAll('.dropdown-item-card');
+
+        // Toggle menu visibility
+        termBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            termMenu.classList.toggle('d-none');
+            termBtn.classList.toggle('open-dropdown');
+            if (!termMenu.classList.contains('d-none')) {
+                termSearchInput.focus();
+            }
+        });
+
+        // Hide menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!termBtn.contains(e.target) && !termMenu.contains(e.target)) {
+                termMenu.classList.add('d-none');
+                termBtn.classList.remove('open-dropdown');
+            }
+        });
+
+        // Handle item selection
+        termItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                // Clear selection
+                termItems.forEach(i => i.classList.remove('selected'));
+                
+                // Set selected state
+                item.classList.add('selected');
+                
+                // Set hidden input value
+                termHiddenInput.value = item.getAttribute('data-id');
+                
+                // Update button text
+                const titleText = item.querySelector('.fw-bold').textContent.trim();
+                termLabel.innerHTML = `<strong>${titleText}</strong>`;
+                termLabel.classList.remove('text-muted');
+                termLabel.classList.add('text-dark');
+
+                // Close menu
+                termMenu.classList.add('d-none');
+                termBtn.classList.remove('open-dropdown');
+            });
+        });
+
+        // Handle search filtering
+        termSearchInput.addEventListener('input', function() {
+            const query = termSearchInput.value.toLowerCase().trim();
+            termItems.forEach(function(item) {
+                const searchData = item.getAttribute('data-search');
+                if (searchData.includes(query)) {
+                    item.style.setProperty('display', 'block', 'important');
+                } else {
+                    item.style.setProperty('display', 'none', 'important');
+                }
+            });
+        });
+
+        // Handle form reset
+        const form = budgetDisplay.closest('form');
+        if (form) {
+            form.addEventListener('reset', function() {
+                setTimeout(() => {
+                    budgetHidden.value = '';
+                    budgetDisplay.value = '';
+                    
+                    // Reset custom terminal selection
+                    termHiddenInput.value = '';
+                    termLabel.innerHTML = '-- Pilih Terminal Asal Bus --';
+                    termLabel.classList.add('text-muted');
+                    termLabel.classList.remove('text-dark');
+                    termBtn.classList.remove('open-dropdown');
+                    termMenu.classList.add('d-none');
+                    termItems.forEach(i => i.classList.remove('selected'));
+                }, 10);
+            });
+
+            // Form Submit Validation for custom dropdown
+            form.addEventListener('submit', function(e) {
+                if (!termHiddenInput.value) {
+                    e.preventDefault();
+                    alert('Silakan pilih Terminal Keberangkatan Asal terlebih dahulu.');
+                    termBtn.focus();
+                    termBtn.click();
+                }
+            });
+        }
+
+        // Initialize if there is already a value (e.g. from history back/redirect back)
+        if (budgetDisplay.value) {
+            updateValues();
+        }
+    });
+</script>
 @endsection

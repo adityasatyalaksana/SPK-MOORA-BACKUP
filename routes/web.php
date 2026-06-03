@@ -58,62 +58,62 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // 1. Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    // 2. Master Data: Gunung
-    Route::resource('gunung', GunungController::class)->names([
-        'index'   => 'admin.gunung.index',
-        'create'  => 'gunung.create',
-        'store'   => 'gunung.store',
-        'edit'    => 'gunung.edit',
-        'update'  => 'gunung.update',
-        'destroy' => 'gunung.destroy',
-    ]);
-    Route::delete('gunung/{id}/delete-image', [GunungController::class, 'deleteImage'])->name('gunung.delete-image');
+    // 2. Master Data (Protected by manage_master_data)
+    Route::middleware(['can:manage_master_data'])->group(function () {
+        Route::resource('gunung', GunungController::class)->names([
+            'index'   => 'admin.gunung.index',
+            'create'  => 'gunung.create',
+            'store'   => 'gunung.store',
+            'edit'    => 'gunung.edit',
+            'update'  => 'gunung.update',
+            'destroy' => 'gunung.destroy',
+        ]);
+        Route::delete('gunung/{id}/delete-image', [GunungController::class, 'deleteImage'])->name('gunung.delete-image');
 
-    // 3. Master Data: Terminal
-    Route::resource('terminal', TerminalController::class)->names([
-        'index'   => 'admin.terminal.index',
-        'store'   => 'terminal.store',
-        'update'  => 'terminal.update',
-        'destroy' => 'terminal.destroy',
-    ]);
+        Route::resource('terminal', TerminalController::class)->names([
+            'index'   => 'admin.terminal.index',
+            'store'   => 'terminal.store',
+            'update'  => 'terminal.update',
+            'destroy' => 'terminal.destroy',
+        ]);
 
-    // 4. Master Data: Jalur
-    Route::resource('jalur', JalurController::class)->names([
-        'index'   => 'admin.jalur.index',
-        'store'   => 'jalur.store',
-        'destroy' => 'jalur.destroy',
-    ]);
+        Route::resource('jalur', JalurController::class)->names([
+            'index'   => 'admin.jalur.index',
+            'store'   => 'jalur.store',
+            'destroy' => 'jalur.destroy',
+        ]);
 
-    // 5. Master Data: Biaya
-    Route::resource('biaya', BiayaController::class)->names([
-        'index'   => 'admin.biaya.index',
-        'store'   => 'biaya.store',
-        'destroy' => 'biaya.destroy',
-    ]);
-    Route::post('biaya/apply-period', [BiayaController::class, 'applyPeriod'])->name('biaya.apply_period');
-    Route::post('biaya/reset-period/{id}', [BiayaController::class, 'resetPeriod'])->name('biaya.reset_period'); // <-- SINKRONISASI ROUTE BARU
+        Route::resource('biaya', BiayaController::class)->names([
+            'index'   => 'admin.biaya.index',
+            'store'   => 'biaya.store',
+            'destroy' => 'biaya.destroy',
+        ]);
+        Route::post('biaya/apply-period', [BiayaController::class, 'applyPeriod'])->name('biaya.apply_period');
+        Route::post('biaya/reset-period/{id}', [BiayaController::class, 'resetPeriod'])->name('biaya.reset_period');
+    });
 
-    // 6. Master Data: Kriteria & Sub-Kriteria
-    Route::resource('kriteria', KriteriaController::class)->names([
-        'index' => 'admin.kriteria.index',
-    ]);
+    // 3. Metode MOORA (Protected by manage_moora)
+    Route::middleware(['can:manage_moora'])->group(function () {
+        Route::resource('kriteria', KriteriaController::class)->names([
+            'index' => 'admin.kriteria.index',
+        ]);
 
-    Route::resource('sub-kriteria', SubKriteriaController::class)->names([
-        'index'   => 'admin.sub-kriteria.index',
-        'store'   => 'sub-kriteria.store',
-        'update'  => 'sub-kriteria.update',
-        'destroy' => 'sub-kriteria.destroy',
-    ]);
+        Route::resource('sub-kriteria', SubKriteriaController::class)->names([
+            'index'   => 'admin.sub-kriteria.index',
+            'store'   => 'sub-kriteria.store',
+            'update'  => 'sub-kriteria.update',
+            'destroy' => 'sub-kriteria.destroy',
+        ]);
 
-    // 7. Metode MOORA: Penilaian & Hasil
-    Route::get('/penilaian', [PenilaianController::class, 'index'])->name('admin.penilaian.index');
-    Route::post('/penilaian', [PenilaianController::class, 'store'])->name('admin.penilaian.store');
-    Route::delete('/penilaian/destroy/{jalur}/{biaya}', [PenilaianController::class, 'destroy'])->name('admin.penilaian.destroy');
-    
-    Route::get('/hasil', [HasilController::class, 'index'])->name('hasil.perhitungan');
+        Route::get('/penilaian', [PenilaianController::class, 'index'])->name('admin.penilaian.index');
+        Route::post('/penilaian', [PenilaianController::class, 'store'])->name('admin.penilaian.store');
+        Route::delete('/penilaian/destroy/{jalur}/{biaya}', [PenilaianController::class, 'destroy'])->name('admin.penilaian.destroy');
+        
+        Route::get('/hasil', [HasilController::class, 'index'])->name('hasil.perhitungan');
+    });
 
     // 8. Kelola User
-    Route::resource('users', UserController::class)->names([
+    Route::resource('users', UserController::class)->middleware('can:manage_users')->names([
         'index'   => 'users.index',
         'create'  => 'users.create',
         'store'   => 'users.store',
@@ -121,8 +121,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'update'  => 'users.update',
         'destroy' => 'users.destroy',
     ]);
+    Route::post('/users/permissions', [UserController::class, 'updatePermissions'])->name('admin.users.update_permissions')->middleware('can:manage_users');
 
     // 9. Log Aktivitas
-    Route::get('/logs', [ActivityLogController::class, 'index'])->name('admin.logs.index');
+    Route::get('/logs', [ActivityLogController::class, 'index'])->name('admin.logs.index')->middleware('can:view_logs');
 
 });

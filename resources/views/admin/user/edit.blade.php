@@ -19,6 +19,16 @@
                     <input type="text" name="username" class="form-control" value="{{ $user->username }}" required>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Tipe Akses (Role)</label>
+                    <select name="role_id" class="form-select" required>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>
+                                {{ $role->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Password Baru <small class="text-muted">(Kosongkan jika tidak diganti)</small></label>
                     <input type="password" name="password" class="form-control">
                 </div>

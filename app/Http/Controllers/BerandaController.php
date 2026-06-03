@@ -12,7 +12,12 @@ class BerandaController extends Controller
      */
     public function index() 
     {
-        return view('pendaki.beranda.index');
+        $totalGunung = Gunung::count();
+        $totalJalur = \App\Models\Jalur::count();
+        $totalKriteria = \App\Models\Kriteria::count();
+        $popularGunungs = Gunung::with('jalurs')->latest()->take(3)->get();
+        
+        return view('pendaki.beranda.index', compact('totalGunung', 'totalJalur', 'totalKriteria', 'popularGunungs'));
     }
 
     /**

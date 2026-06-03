@@ -13,7 +13,8 @@ class Jalur extends Model
         'user_id',
         'gunung_id', 
         'nama_jalur', 
-        'biaya_simaksi', 
+        'biaya_simaksi_weekday',
+        'biaya_simaksi_weekend',
         'estimasi_jam', 
         'tingkat_kesulitan'
     ];

@@ -65,7 +65,8 @@ class RekomendasiController extends Controller
                     }
                 }
 
-                $hargaSimaksi = $jalur->biaya_simaksi;
+                // Hitung biaya simaksi berdasarkan hari keberangkatan (weekend vs weekday)
+                $hargaSimaksi = $date->isWeekend() ? $jalur->biaya_simaksi_weekend : $jalur->biaya_simaksi_weekday;
                 $totalEstimasi = ($hargaTransport + $hargaSimaksi) * $request->jumlah_anggota;
         
                 // Masukkan ke array hanya jika total estimasi biaya kelompok masuk dalam budget user
@@ -80,18 +81,22 @@ class RekomendasiController extends Controller
                     $jalur->biaya_per_orang = $hargaTransport + $hargaSimaksi;
                     $jalur->total_dana_kelompok = $totalEstimasi;
                     $jalur->active_biaya_id = $biayaBus->id;
+                    $jalur->active_biaya_simaksi = $hargaSimaksi;
 
                     $jalurLolosFilter[] = $jalur;
                 }
             }
         }
 
+        $terminals = Terminal::where('tipe', 'Starting Point')->get();
+
         // Jika tidak ada satu pun rute jalur yang sesuai anggaran kelompok, hentikan proses
         if (empty($jalurLolosFilter)) {
             return view('pendaki.rekomendasi.pilihan', [
                 'rekomendasi' => [],
                 'input' => $request->all(),
-                'nama_terminal' => $nama_terminal
+                'nama_terminal' => $nama_terminal,
+                'terminals' => $terminals
             ]);
         }
 
@@ -164,7 +169,8 @@ class RekomendasiController extends Controller
         return view('pendaki.rekomendasi.pilihan', [
             'rekomendasi'   => $rekomendasiSorted,
             'input'         => $request->all(),
-            'nama_terminal' => $nama_terminal
+            'nama_terminal' => $nama_terminal,
+            'terminals'     => $terminals
         ]);
     }
 }

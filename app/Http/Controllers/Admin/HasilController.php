@@ -7,59 +7,81 @@ use Illuminate\Http\Request;
 use App\Models\Kriteria;
 use App\Models\Penilaian;
 use App\Models\Jalur;
-use Illuminate\Support\Facades\DB;
+use App\Models\Biaya;
 
 class HasilController extends Controller
 {
     public function index()
     {
-        // Mengambil kriteria dan penilaians beserta relasinya
         $kriterias = Kriteria::all();
-        $penilaians = Penilaian::with(['jalur.gunung', 'kriteria'])->get();
-        
-        // Eager load relasi gunung pada model Jalur agar query efisien
-        $jalurs = Jalur::with('gunung')->get();
+        $penilaians = Penilaian::with([
+            'jalur.gunung', 
+            'biaya.start_terminal', 
+            'biaya.end_terminal', 
+            'kriteria'
+        ])->get();
 
         if ($kriterias->isEmpty() || $penilaians->isEmpty()) {
-            return view('admin.hasil.index', ['hasil' => [], 'matriks' => [], 'terbobot' => []]);
+            return view('admin.hasil.index', [
+                'kriterias' => $kriterias,
+                'hasil' => [],
+                'matriks' => [],
+                'terbobot' => [],
+                'pembagi' => []
+            ]);
         }
 
-        // 1. Matriks Keputusan & Pembagi
-        $matriks = [];
+        // Cari semua kombinasi alternatif yang memiliki penilaian
+        $alternatifs = [];
+        $groupedPenilaian = $penilaians->groupBy(function($item) {
+            return $item->jalur_id . '-' . $item->biaya_id;
+        });
+
+        foreach ($groupedPenilaian as $key => $items) {
+            $first = $items->first();
+            $alternatifs[$key] = [
+                'jalur_id' => $first->jalur_id,
+                'biaya_id' => $first->biaya_id,
+                'nama_gunung' => $first->jalur->gunung->nama_gunung ?? '-',
+                'nama_jalur' => $first->jalur->nama_jalur ?? '-',
+                'nama_armada' => $first->biaya->nama_armada ?? '-',
+                'start_terminal' => $first->biaya->start_terminal->nama_terminal ?? '-',
+                'end_terminal' => $first->biaya->end_terminal->nama_terminal ?? '-',
+                'items' => $items
+            ];
+        }
+
+        // 1. Hitung Pembagi (Normalization Denominator) untuk masing-masing kriteria
         $pembagi = [];
-        
         foreach ($kriterias as $k) {
             $sumKuadrat = 0;
-            foreach ($jalurs as $j) {
-                // Membuat penanda unik (Nama Gunung - Nama Jalur) agar tidak saling menimpa
-                $namaUnik = $j->gunung->nama_gunung . ' (' . $j->nama_jalur . ')';
-                
-                // Cari nilai berdasarkan jalur_id dan kriteria_id
-                $nilai = $penilaians->where('jalur_id', $j->id)->where('kriteria_id', $k->id)->first()->nilai ?? 0;
-                
-                $matriks[$namaUnik][$k->nama_kriteria] = $nilai;
+            foreach ($alternatifs as $altKey => $alt) {
+                $nilai = $alt['items']->where('kriteria_id', $k->id)->first()->nilai ?? 0;
                 $sumKuadrat += pow($nilai, 2);
             }
             $pembagi[$k->id] = $sumKuadrat > 0 ? sqrt($sumKuadrat) : 1;
         }
 
-        // 2. Normalisasi, Terbobot & Perhitungan Nilai Akhir (MOORA)
+        // 2. Normalisasi, Pembobotan, dan Perangkingan MOORA
+        $matriks = [];
         $terbobot = [];
         $hasil = [];
-        
-        foreach ($jalurs as $j) {
-            $namaUnik = $j->gunung->nama_gunung . ' (' . $j->nama_jalur . ')';
-            $max = 0; // Untuk menampung akumulasi kriteria BENEFIT
-            $min = 0; // Untuk menampung akumulasi kriteria COST
+
+        foreach ($alternatifs as $altKey => $alt) {
+            $max = 0; // Akumulasi kriteria BENEFIT
+            $min = 0; // Akumulasi kriteria COST
             
+            $matriksRow = [];
+            $terbobotRow = [];
+
             foreach ($kriterias as $k) {
-                $nilaiAsli = $matriks[$namaUnik][$k->nama_kriteria] ?? 0;
+                $nilaiAsli = $alt['items']->where('kriteria_id', $k->id)->first()->nilai ?? 0;
                 $norm = $nilaiAsli / $pembagi[$k->id];
                 $nilaiBobot = $norm * ($k->bobot ?? 0);
                 
-                $terbobot[$namaUnik][$k->nama_kriteria] = $nilaiBobot;
+                $matriksRow[$k->id] = $nilaiAsli;
+                $terbobotRow[$k->id] = $nilaiBobot;
 
-                // Memisahkan penjumlahan secara dinamis berdasarkan tipe kriteria dari database
                 if (strtolower($k->tipe) == 'benefit') {
                     $max += $nilaiBobot;
                 } else {
@@ -67,20 +89,41 @@ class HasilController extends Controller
                 }
             }
 
-            // Rumus Utama MOORA: Yi = (Σ Max Benefit) - (Σ Min Cost)
+            $matriks[$altKey] = [
+                'nama_gunung' => $alt['nama_gunung'],
+                'nama_jalur' => $alt['nama_jalur'],
+                'nama_armada' => $alt['nama_armada'],
+                'start_terminal' => $alt['start_terminal'],
+                'end_terminal' => $alt['end_terminal'],
+                'nilai' => $matriksRow
+            ];
+
+            $terbobot[$altKey] = [
+                'nama_gunung' => $alt['nama_gunung'],
+                'nama_jalur' => $alt['nama_jalur'],
+                'nama_armada' => $alt['nama_armada'],
+                'start_terminal' => $alt['start_terminal'],
+                'end_terminal' => $alt['end_terminal'],
+                'nilai' => $terbobotRow
+            ];
+
             $skorAkhir = $max - $min;
 
             $hasil[] = [
-                'jalur' => $namaUnik, // Mengirimkan nama gabungan yang informatif ke Blade
-                'max'   => $max,
-                'min'   => $min,
-                'skor'  => $skorAkhir // Nilai Yi (Skor Akhir) hasil optimasi penuh
+                'nama_gunung' => $alt['nama_gunung'],
+                'nama_jalur' => $alt['nama_jalur'],
+                'nama_armada' => $alt['nama_armada'],
+                'start_terminal' => $alt['start_terminal'],
+                'end_terminal' => $alt['end_terminal'],
+                'max' => $max,
+                'min' => $min,
+                'skor' => $skorAkhir
             ];
         }
 
         // Urutkan Ranking dari skor tertinggi ke terendah
         usort($hasil, fn($a, $b) => $b['skor'] <=> $a['skor']);
 
-        return view('admin.hasil.index', compact('kriterias', 'matriks', 'terbobot', 'hasil'));
+        return view('admin.hasil.index', compact('kriterias', 'matriks', 'terbobot', 'hasil', 'pembagi'));
     }
 }

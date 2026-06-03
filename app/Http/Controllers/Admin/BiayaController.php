@@ -26,6 +26,18 @@ class BiayaController extends Controller
 
     public function store(Request $request)
     {
+        // Bersihkan pemisah ribuan (titik) sebelum validasi
+        if ($request->has('harga_pp')) {
+            $request->merge([
+                'harga_pp' => (int) str_replace('.', '', $request->harga_pp)
+            ]);
+        }
+        if ($request->has('harga_weekend') && !is_null($request->harga_weekend)) {
+            $request->merge([
+                'harga_weekend' => (int) str_replace('.', '', $request->harga_weekend)
+            ]);
+        }
+
         $request->validate([
             'jalur_id' => 'required|exists:jalurs,id', // Validasi jalur harus diisi
             'start_terminal_id' => 'required',
@@ -46,6 +58,18 @@ class BiayaController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Bersihkan pemisah ribuan (titik) sebelum validasi
+        if ($request->has('harga_pp')) {
+            $request->merge([
+                'harga_pp' => (int) str_replace('.', '', $request->harga_pp)
+            ]);
+        }
+        if ($request->has('harga_weekend') && !is_null($request->harga_weekend)) {
+            $request->merge([
+                'harga_weekend' => (int) str_replace('.', '', $request->harga_weekend)
+            ]);
+        }
+
         $request->validate([
             'jalur_id' => 'required|exists:jalurs,id',
             'start_terminal_id' => 'required',
@@ -68,6 +92,13 @@ class BiayaController extends Controller
 
     public function applyPeriod(Request $request)
     {
+        // Bersihkan pemisah ribuan (titik) sebelum validasi
+        if ($request->has('harga_periode')) {
+            $request->merge([
+                'harga_periode' => (int) str_replace('.', '', $request->harga_periode)
+            ]);
+        }
+
         $request->validate([
             'biaya_id' => 'required',
             'start_date' => 'required|date',

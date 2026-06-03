@@ -12,13 +12,16 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->get();
-        return view('admin.user.index', compact('users'));
+        $users = User::with('role')->latest()->get();
+        $roles = \App\Models\Role::with('permissions')->get();
+        $permissions = \App\Models\Permission::all();
+        return view('admin.user.index', compact('users', 'roles', 'permissions'));
     }
 
     public function create()
     {
-        return view('admin.user.create');
+        $roles = \App\Models\Role::all();
+        return view('admin.user.create', compact('roles'));
     }
 
     public function store(Request $request)
@@ -27,15 +30,17 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:3|confirmed',
+            'role_id' => 'required|exists:roles,id',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'password' => $request->password,
+            'role_id' => $request->role_id,
         ]);
 
-        ActivityLog::log("Menambahkan user " . $user->username);
+        ActivityLog::log("Menambahkan user " . $user->username . " sebagai " . $user->role->name);
 
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
     }
@@ -43,7 +48,8 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('admin.user.edit', compact('user'));
+        $roles = \App\Models\Role::all();
+        return view('admin.user.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, $id)
@@ -54,10 +60,12 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username,'.$user->id,
             'password' => 'nullable|string|min:3|confirmed',
+            'role_id' => 'required|exists:roles,id',
         ]);
 
         $user->name = $request->name;
         $user->username = $request->username;
+        $user->role_id = $request->role_id;
         
         if ($request->filled('password')) {
             $user->password = $request->password;
@@ -82,5 +90,23 @@ class UserController extends Controller
         ActivityLog::log("Menghapus user " . $username);
 
         return back()->with('success', 'User berhasil dihapus.');
+    }
+
+    public function updatePermissions(Request $request)
+    {
+        $request->validate([
+            'permissions' => 'array',
+        ]);
+
+        $roles = \App\Models\Role::all();
+        foreach ($roles as $role) {
+            // Get permissions checked for this role, default to empty array
+            $rolePermissions = $request->input('permissions.' . $role->id, []);
+            $role->permissions()->sync($rolePermissions);
+        }
+
+        ActivityLog::log("Mengubah hak akses dinamis role");
+
+        return redirect()->route('users.index')->with('success', 'Hak akses role berhasil diperbarui.');
     }
 }

@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'username',
         'password',
+        'role_id',
     ];
 
     /**
@@ -52,4 +53,14 @@ class User extends Authenticatable
     public function kriterias() { return $this->hasMany(Kriteria::class, 'user_id'); }
     public function penilaians() { return $this->hasMany(Penilaian::class, 'user_id'); }
     public function activityLogs() { return $this->hasMany(ActivityLog::class, 'user_id'); }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function hasPermission($permissionName)
+    {
+        return $this->role && $this->role->permissions->contains('name', $permissionName);
+    }
 }

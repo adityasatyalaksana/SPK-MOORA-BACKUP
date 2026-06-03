@@ -19,10 +19,23 @@ class JalurController extends Controller
 
     public function store(Request $request)
     {
+        // Bersihkan pemisah ribuan (titik) sebelum validasi
+        if ($request->has('biaya_simaksi_weekday')) {
+            $request->merge([
+                'biaya_simaksi_weekday' => (int) str_replace('.', '', $request->biaya_simaksi_weekday)
+            ]);
+        }
+        if ($request->has('biaya_simaksi_weekend')) {
+            $request->merge([
+                'biaya_simaksi_weekend' => (int) str_replace('.', '', $request->biaya_simaksi_weekend)
+            ]);
+        }
+
         $request->validate([
             'gunung_id' => 'required',
             'nama_jalur' => 'required|string|max:255',
-            'biaya_simaksi' => 'required|integer',
+            'biaya_simaksi_weekday' => 'required|integer',
+            'biaya_simaksi_weekend' => 'required|integer',
             'estimasi_jam' => 'required|integer',
             'tingkat_kesulitan' => 'required',
         ]);
@@ -36,10 +49,23 @@ class JalurController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Bersihkan pemisah ribuan (titik) sebelum validasi
+        if ($request->has('biaya_simaksi_weekday')) {
+            $request->merge([
+                'biaya_simaksi_weekday' => (int) str_replace('.', '', $request->biaya_simaksi_weekday)
+            ]);
+        }
+        if ($request->has('biaya_simaksi_weekend')) {
+            $request->merge([
+                'biaya_simaksi_weekend' => (int) str_replace('.', '', $request->biaya_simaksi_weekend)
+            ]);
+        }
+
         $request->validate([
             'gunung_id' => 'required',
             'nama_jalur' => 'required|string|max:255',
-            'biaya_simaksi' => 'required|integer',
+            'biaya_simaksi_weekday' => 'required|integer',
+            'biaya_simaksi_weekend' => 'required|integer',
             'estimasi_jam' => 'required|integer',
             'tingkat_kesulitan' => 'required',
         ]);

@@ -9,11 +9,11 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
+    <div class="card premium-card shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle premium-table">
+                    <thead class="bg-dark text-white">
                         <tr>
                             <th class="ps-4" width="50">No</th>
                             <th width="180">Waktu &amp; Tanggal</th>
@@ -35,7 +35,6 @@
                                     </div>
                                     <div>
                                         <div class="fw-bold text-dark" style="font-size: 0.9rem;">{{ $item->user->name ?? 'System' }}</div>
-                                        <!-- <div class="text-muted text-lowercase" style="font-size: 0.75rem;">{{ '@' . ($item->user->username ?? '-') }}</div> -->
                                     </div>
                                 </div>
                             </td>

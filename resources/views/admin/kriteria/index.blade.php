@@ -16,11 +16,11 @@
         <div class="alert alert-success border-0 shadow-sm mb-4">{{ session('success') }}</div>
     @endif
 
-    <div class="card border-0 shadow-sm">
+    <div class="card premium-card shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle premium-table">
+                    <thead class="bg-dark text-white">
                         <tr>
                             <th class="ps-4" width="50">No</th>
                             <th>Kode</th>
@@ -34,27 +34,27 @@
                         @forelse ($kriterias as $key => $item)
                         <tr>
                             <td class="ps-4">{{ $key + 1 }}</td>
-                            <td><span class="badge bg-dark">{{ $item->kode_kriteria }}</span></td>
+                            <td><span class="badge bg-dark px-2.5 py-1.5" style="border-radius: 6px;">{{ $item->kode_kriteria }}</span></td>
                             <td class="fw-bold">{{ $item->nama_kriteria }}</td>
                             <td>
                                 @if($item->tipe == 'Benefit')
-                                    <span class="text-success fw-bold"><i class="bi bi-arrow-up-circle me-1"></i> Benefit</span>
+                                    <span class="text-success fw-bold"><i class="bi bi-arrow-up-circle-fill me-1"></i> Benefit</span>
                                 @else
-                                    <span class="text-danger fw-bold"><i class="bi bi-arrow-down-circle me-1"></i> Cost</span>
+                                    <span class="text-danger fw-bold"><i class="bi bi-arrow-down-circle-fill me-1"></i> Cost</span>
                                 @endif
                             </td>
-                            <td>{{ $item->bobot }}</td>
+                            <td class="fw-semibold">{{ $item->bobot }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2">
                                     {{-- Tombol Edit --}}
-                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditKriteria{{ $item->id }}" title="Edit">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" style="border-radius: 8px;" data-bs-toggle="modal" data-bs-target="#modalEditKriteria{{ $item->id }}" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
  
                                      {{-- Tombol Hapus --}}
                                      <form action="{{ route('kriteria.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus kriteria ini?')">
                                          @csrf @method('DELETE')
-                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                         <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;" title="Hapus">
                                              <i class="bi bi-trash"></i>
                                          </button>
                                      </form>
@@ -64,45 +64,53 @@
 
                         <div class="modal fade" id="modalEditKriteria{{ $item->id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content border-0 shadow">
-                                    <div class="modal-header bg-info text-white">
-                                        <h5 class="modal-title fw-bold">Edit Kriteria</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                <div class="modal-content modal-premium">
+                                    <div class="modal-header bg-light">
+                                        <h5 class="modal-title fw-bold text-dark d-flex align-items-center">
+                                            <i class="bi bi-pencil-square text-info me-2" style="font-size: 1.25rem;"></i>Edit Kriteria
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <form action="{{ route('kriteria.update', $item->id) }}" method="POST">
                                         @csrf @method('PUT')
-                                        <div class="modal-body p-4">
+                                        <div class="modal-body p-4 text-start">
                                             <div class="mb-3">
-                                                <label class="form-label fw-bold small">KODE KRITERIA</label>
-                                                <input type="text" name="kode_kriteria" class="form-control" value="{{ $item->kode_kriteria }}" required>
+                                                <label class="form-label fw-bold small text-muted text-uppercase">Kode Kriteria</label>
+                                                <input type="text" name="kode_kriteria" class="form-control form-control-premium" value="{{ $item->kode_kriteria }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label fw-bold small">NAMA KRITERIA</label>
-                                                <input type="text" name="nama_kriteria" class="form-control" value="{{ $item->nama_kriteria }}" required>
+                                                <label class="form-label fw-bold small text-muted text-uppercase">Nama Kriteria</label>
+                                                <input type="text" name="nama_kriteria" class="form-control form-control-premium" value="{{ $item->nama_kriteria }}" required>
                                             </div>
                                             <div class="row">
                                                 <div class="col-6 mb-3">
-                                                    <label class="form-label fw-bold small">TIPE</label>
-                                                    <select name="tipe" class="form-select" required>
+                                                    <label class="form-label fw-bold small text-muted text-uppercase">Tipe</label>
+                                                    <select name="tipe" class="form-select form-select-custom" required>
                                                         <option value="Benefit" {{ $item->tipe == 'Benefit' ? 'selected' : '' }}>Benefit</option>
                                                         <option value="Cost" {{ $item->tipe == 'Cost' ? 'selected' : '' }}>Cost</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-6 mb-3">
-                                                    <label class="form-label fw-bold small">BOBOT</label>
-                                                    <input type="number" step="0.01" name="bobot" class="form-control" value="{{ $item->bobot }}" required>
+                                                    <label class="form-label fw-bold small text-muted text-uppercase">Bobot</label>
+                                                    <input type="number" step="0.01" name="bobot" class="form-control form-control-premium" value="{{ $item->bobot }}" required>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="modal-footer bg-light">
-                                            <button type="submit" class="btn btn-info text-white px-4 fw-bold">Update Kriteria</button>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-premium-secondary" data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-info btn-premium-primary text-white fw-bold">Simpan Perubahan</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                         @empty
-                        <tr><td colspan="6" class="text-center py-5">Belum ada data kriteria.</td></tr>
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-folder2-open d-block mb-2" style="font-size: 2rem;"></i>
+                                Belum ada data kriteria.
+                            </td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -113,38 +121,41 @@
 
 <div class="modal fade" id="modalTambahKriteria" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fw-bold">Tambah Kriteria Baru</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-content modal-premium">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center">
+                    <i class="bi bi-plus-circle-fill text-primary me-2" style="font-size: 1.25rem;"></i>Tambah Kriteria Baru
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{ route('kriteria.store') }}" method="POST">
                 @csrf
-                <div class="modal-body p-4">
+                <div class="modal-body p-4 text-start">
                     <div class="mb-3">
-                        <label class="form-label fw-bold small">KODE KRITERIA</label>
-                        <input type="text" name="kode_kriteria" class="form-control" placeholder="Contoh: C1" required>
+                        <label class="form-label fw-bold small text-muted text-uppercase">Kode Kriteria</label>
+                        <input type="text" name="kode_kriteria" class="form-control form-control-premium" placeholder="Contoh: C1" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold small">NAMA KRITERIA</label>
-                        <input type="text" name="nama_kriteria" class="form-control" placeholder="Contoh: Harga Tiket" required>
+                        <label class="form-label fw-bold small text-muted text-uppercase">Nama Kriteria</label>
+                        <input type="text" name="nama_kriteria" class="form-control form-control-premium" placeholder="Contoh: Harga Tiket" required>
                     </div>
                     <div class="row">
                         <div class="col-6 mb-3">
-                            <label class="form-label fw-bold small">TIPE</label>
-                            <select name="tipe" class="form-select" required>
+                            <label class="form-label fw-bold small text-muted text-uppercase">Tipe</label>
+                            <select name="tipe" class="form-select form-select-custom" required>
                                 <option value="Benefit">Benefit</option>
                                 <option value="Cost">Cost</option>
                             </select>
                         </div>
                         <div class="col-6 mb-3">
-                            <label class="form-label fw-bold small">BOBOT</label>
-                            <input type="number" step="0.01" name="bobot" class="form-control" placeholder="Contoh: 0.25" required>
+                            <label class="form-label fw-bold small text-muted text-uppercase">Bobot</label>
+                            <input type="number" step="0.01" name="bobot" class="form-control form-control-premium" placeholder="Contoh: 0.25" required>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer bg-light">
-                    <button type="submit" class="btn btn-primary px-4 fw-bold">Simpan Kriteria</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary btn-premium-primary fw-bold">Simpan Kriteria</button>
                 </div>
             </form>
         </div>

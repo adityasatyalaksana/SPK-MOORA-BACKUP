@@ -4,7 +4,7 @@
 <div class="container-fluid p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold text-dark">Master Data Gunung</h3>
-        <a href="{{ route('gunung.create') }}" class="btn btn-success shadow-sm">
+        <a href="{{ route('gunung.create') }}" class="btn btn-primary btn-premium-primary shadow-sm">
             <i class="bi bi-plus-lg me-2"></i> Tambah Gunung
         </a>
     </div>
@@ -17,13 +17,13 @@
         </div>
     @endif
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
+    <div class="card premium-card shadow-sm">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle premium-table">
+                    <thead class="bg-dark text-white">
                         <tr>
-                            <th width="50">No</th>
+                            <th class="ps-4" width="50">No</th>
                             <th>Sampul</th>
                             <th>Nama Gunung</th>
                             <th>Lokasi</th>
@@ -34,7 +34,7 @@
                     <tbody>
                         @forelse ($gunungs as $key => $item)
                         <tr>
-                            <td>{{ $key + 1 }}</td>
+                            <td class="ps-4">{{ $key + 1 }}</td>
                             <td>
                                 @if($item->gambar && count($item->gambar) > 0)
                                     {{-- Menggunakan Storage::url untuk memastikan path benar --}}
@@ -50,30 +50,30 @@
                             <td class="fw-bold text-success">{{ $item->nama_gunung }}</td>
                             <td><i class="bi bi-geo-alt text-danger"></i> {{ $item->lokasi }}</td>
                             <td>{{ number_format($item->ketinggian) }} MDPL</td>
-                            <td class="text-center">
+                            <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}" title="Detail">
+                                    <button type="button" class="btn btn-sm btn-outline-info" style="border-radius: 8px;" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}" title="Detail">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                     
-                                    <a href="{{ route('gunung.edit', $item->id) }}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                    <a href="{{ route('gunung.edit', $item->id) }}" class="btn btn-sm btn-outline-primary" style="border-radius: 8px;" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-
+ 
                                     <form action="{{ route('gunung.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus {{ $item->nama_gunung }}?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;" title="Hapus">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
-
+ 
                         <div class="modal fade" id="detailModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg modal-dialog-centered">
-                                <div class="modal-content border-0 shadow">
+                                <div class="modal-content modal-premium">
                                     <div class="modal-header bg-light">
                                         <h5 class="modal-title fw-bold">Detail Gunung: {{ $item->nama_gunung }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
