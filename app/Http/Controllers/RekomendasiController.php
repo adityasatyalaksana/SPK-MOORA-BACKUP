@@ -101,55 +101,67 @@ class RekomendasiController extends Controller
         }
 
         // =====================================================================
-        // 3. PROSES PERHITUNGAN METODE MOORA
+        // 3. PROSES PERHITUNGAN METODE MOORA DENGAN BIAYA DINAMIS (TRIAL)
         // =====================================================================
 
-        // LANGKAH A: Menghitung Nilai Pembagi Normalisasi Lintas Jalur Global (Agar Sinkron Sempurna Dengan Admin)
+        // Buat matriks skor dinamis untuk alternatif yang lolos filter
+        $skorMatriks = [];
+        foreach ($jalurLolosFilter as $jalur) {
+            $scores = [];
+            foreach ($kriterias as $kcriteria) {
+                if ($kcriteria->kode_kriteria === 'C1') {
+                    // C1: Biaya Simaksi
+                    $simaksiCost = $jalur->active_biaya_simaksi * $request->jumlah_anggota;
+                    $ratio = $request->budget > 0 ? ($simaksiCost / $request->budget) : 1;
+                    $scores[$kcriteria->id] = 1 + (4 * min(1, max(0, $ratio)));
+                } elseif ($kcriteria->kode_kriteria === 'C2') {
+                    // C2: Biaya Transportasi
+                    $transportCost = $jalur->harga_pp * $request->jumlah_anggota;
+                    $ratio = $request->budget > 0 ? ($transportCost / $request->budget) : 1;
+                    $scores[$kcriteria->id] = 1 + (4 * min(1, max(0, $ratio)));
+                } else {
+                    // Kriteria lain (C3, C4, C5, C6) mengambil dari database
+                    $penilaian = $semuaPenilaian->where('jalur_id', $jalur->id)
+                                                ->where('biaya_id', $jalur->active_biaya_id)
+                                                ->where('kriteria_id', $kcriteria->id)
+                                                ->first();
+                    if (!$penilaian) {
+                        $penilaian = $semuaPenilaian->where('jalur_id', $jalur->id)
+                                                    ->where('kriteria_id', $kcriteria->id)
+                                                    ->first();
+                    }
+                    $scores[$kcriteria->id] = $penilaian ? $penilaian->nilai : 1;
+                }
+            }
+            $skorMatriks[$jalur->id] = $scores;
+        }
+
+        // Hitung Nilai Pembagi Normalisasi (Denominator) berdasarkan alternatif yang lolos filter
         $pembagiKriteria = [];
         foreach ($kriterias as $kcriteria) {
             $jumlahKuadrat = 0;
-            foreach ($semuaJalur as $jalurGlobal) {
-                // Tarik nilai matriks keputusan awal global
-                $penilaianGlobal = $semuaPenilaian->where('jalur_id', $jalurGlobal->id)
-                                                  ->where('kriteria_id', $kcriteria->id)
-                                                  ->first();
-                
-                $nilaiSkorGlobal = $penilaianGlobal ? $penilaianGlobal->nilai : 1;
-                $jumlahKuadrat += pow($nilaiSkorGlobal, 2);
+            foreach ($jalurLolosFilter as $jalur) {
+                $nilaiSkor = $skorMatriks[$jalur->id][$kcriteria->id] ?? 1;
+                $jumlahKuadrat += pow($nilaiSkor, 2);
             }
             $pembagiKriteria[$kcriteria->id] = $jumlahKuadrat > 0 ? sqrt($jumlahKuadrat) : 1;
         }
 
-        // LANGKAH B & C: Normalisasi, Perkalian Bobot, dan Kalkulasi Nilai Akhir Preferensi Yi (Max - Min)
+        // Normalisasi, Perkalian Bobot, dan Hitung Nilai Akhir MOORA (Yi)
         $rekomendasiHasilMoora = [];
         foreach ($jalurLolosFilter as $jalur) {
             $nilaiMaxBenefit = 0;
             $nilaiMinCost = 0;
 
             foreach ($kriterias as $kcriteria) {
-                // OPSI 1: Cari baris penilaian spesifik berdasarkan kombinasi jalur_id DAN biaya_id aktif
-                $penilaianAwal = $semuaPenilaian->where('jalur_id', $jalur->id)
-                                                ->where('biaya_id', $jalur->active_biaya_id)
-                                                ->where('kriteria_id', $kcriteria->id)
-                                                ->first();
-
-                // OPSI 2 (FALLBACK): Jika Opsi 1 null, cari baris default yang hanya mencocokkan jalur_id dan kriteria_id
-                if (!$penilaianAwal) {
-                    $penilaianAwal = $semuaPenilaian->where('jalur_id', $jalur->id)
-                                                    ->where('kriteria_id', $kcriteria->id)
-                                                    ->first();
-                }
-
-                // Ambil nilai asli, jika data penilaian kosong set ke default terendah (1)
-                $nilaiAwal = $penilaianAwal ? $penilaianAwal->nilai : 1;
+                $score = $skorMatriks[$jalur->id][$kcriteria->id] ?? 1;
                 
-                // Eksekusi Rumus Normalisasi: Xij = xij / sqrt(Σ x^2)
-                $nilaiNormalisasi = $nilaiAwal / $pembagiKriteria[$kcriteria->id];
+                // Normalisasi: Xij = xij / sqrt(Σ x^2)
+                $nilaiNormalisasi = $score / $pembagiKriteria[$kcriteria->id];
                 
-                // Eksekusi Rumus Matriks Terbobot: Yij = Xij * Wj
+                // Matriks Terbobot: Yij = Xij * Wj
                 $nilaiTerbobot = $nilaiNormalisasi * $kcriteria->bobot;
 
-                // Akumulasikan penjumlahan terpisah secara dinamis berdasarkan tipe kriteria dari database
                 if (strtolower($kcriteria->tipe) == 'benefit') {
                     $nilaiMaxBenefit += $nilaiTerbobot;
                 } else {
@@ -157,7 +169,6 @@ class RekomendasiController extends Controller
                 }
             }
 
-            // Rumus Utama Perangkingan Multi-Objektif MOORA: Yi = (Σ Max Benefit) - (Σ Min Cost)
             $jalur->nilai_moora = $nilaiMaxBenefit - $nilaiMinCost;
             $rekomendasiHasilMoora[] = $jalur;
         }
