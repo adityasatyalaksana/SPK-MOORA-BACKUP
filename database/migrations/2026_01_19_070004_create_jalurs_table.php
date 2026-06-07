@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('biaya_simaksi'); 
             $table->decimal('estimasi_jam'); 
             
-            $table->enum('tingkat_kesulitan', ['Mudah', 'Sedang', 'Sulit']);
+            $table->enum('tingkat_kesulitan', ['Sangat Mudah', 'Mudah', 'Sedang', 'Sulit', 'Sangat Sulit']);
             $table->timestamps();
         });
     }

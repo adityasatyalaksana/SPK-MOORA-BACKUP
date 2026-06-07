@@ -64,6 +64,7 @@ class HasilController extends Controller
 
         // 2. Normalisasi, Pembobotan, dan Perangkingan MOORA
         $matriks = [];
+        $normalisasi = [];
         $terbobot = [];
         $hasil = [];
 
@@ -72,6 +73,7 @@ class HasilController extends Controller
             $min = 0; // Akumulasi kriteria COST
             
             $matriksRow = [];
+            $normalisasiRow = [];
             $terbobotRow = [];
 
             foreach ($kriterias as $k) {
@@ -80,6 +82,7 @@ class HasilController extends Controller
                 $nilaiBobot = $norm * ($k->bobot ?? 0);
                 
                 $matriksRow[$k->id] = $nilaiAsli;
+                $normalisasiRow[$k->id] = $norm;
                 $terbobotRow[$k->id] = $nilaiBobot;
 
                 if (strtolower($k->tipe) == 'benefit') {
@@ -98,6 +101,15 @@ class HasilController extends Controller
                 'nilai' => $matriksRow
             ];
 
+            $normalisasi[$altKey] = [
+                'nama_gunung' => $alt['nama_gunung'],
+                'nama_jalur' => $alt['nama_jalur'],
+                'nama_armada' => $alt['nama_armada'],
+                'start_terminal' => $alt['start_terminal'],
+                'end_terminal' => $alt['end_terminal'],
+                'nilai' => $normalisasiRow
+            ];
+
             $terbobot[$altKey] = [
                 'nama_gunung' => $alt['nama_gunung'],
                 'nama_jalur' => $alt['nama_jalur'],
@@ -110,6 +122,7 @@ class HasilController extends Controller
             $skorAkhir = $max - $min;
 
             $hasil[] = [
+                'alt_key' => $altKey,
                 'nama_gunung' => $alt['nama_gunung'],
                 'nama_jalur' => $alt['nama_jalur'],
                 'nama_armada' => $alt['nama_armada'],
@@ -124,6 +137,6 @@ class HasilController extends Controller
         // Urutkan Ranking dari skor tertinggi ke terendah
         usort($hasil, fn($a, $b) => $b['skor'] <=> $a['skor']);
 
-        return view('admin.hasil.index', compact('kriterias', 'matriks', 'terbobot', 'hasil', 'pembagi'));
+        return view('admin.hasil.index', compact('kriterias', 'matriks', 'normalisasi', 'terbobot', 'hasil', 'pembagi', 'alternatifs'));
     }
 }

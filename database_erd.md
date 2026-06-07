@@ -59,7 +59,7 @@ erDiagram
         decimal biaya_simaksi_weekday
         decimal biaya_simaksi_weekend
         decimal estimasi_jam
-        enum tingkat_kesulitan "Mudah, Sedang, Sulit"
+        enum tingkat_kesulitan "Sangat Mudah, Mudah, Sedang, Sulit, Sangat Sulit"
         timestamp created_at
         timestamp updated_at
     }
