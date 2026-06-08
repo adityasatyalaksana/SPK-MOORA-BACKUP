@@ -26,8 +26,10 @@ class HasilController extends Controller
                 'kriterias' => $kriterias,
                 'hasil' => [],
                 'matriks' => [],
+                'normalisasi' => [],
                 'terbobot' => [],
-                'pembagi' => []
+                'pembagi' => [],
+                'alternatifs' => []
             ]);
         }
 

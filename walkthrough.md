@@ -72,3 +72,27 @@ Telah ditambahkan sistem notifikasi sambutan untuk mempercantik dan mempersonali
 
 ## Pembaruan Layout Dashboard
 *   **Pembersihan Menu Aksi Cepat**: Bagian **Aksi Cepat Menu Admin** (Quick Actions Grid) telah dihapus dari Dashboard Admin untuk merapikan antarmuka dan memusatkan interaksi navigasi di sidebar utama.
+
+---
+
+## Pembaruan Hak Akses Per Menu Satu-Satu (Fine-Grained Permissions)
+Kami memecah kategori hak akses besar (`manage_master_data` dan `manage_moora`) menjadi hak akses individual per menu untuk memberikan fleksibilitas penuh bagi Superadmin saat mengelola wewenang Admin secara dinamis:
+
+1. **8 Hak Akses Baru**:
+   * `manage_gunung` => Mengelola Data Gunung
+   * `manage_terminal` => Mengelola Data Terminal
+   * `manage_jalur` => Mengelola Data Jalur
+   * `manage_biaya` => Mengelola Data Biaya & Armada
+   * `manage_kriteria` => Mengelola Data Kriteria
+   * `manage_sub_kriteria` => Mengelola Data Sub-Kriteria
+   * `manage_penilaian` => Mengelola Penilaian Alternatif
+   * `view_hasil` => Melihat Hasil Perangkingan MOORA
+2. **Pembaruan Backend & Registrasi Gate**:
+   * [AppServiceProvider.php](file:///c:/laragon/www/SPK-MOORA/app/Providers/AppServiceProvider.php): Mendaftarkan kesepuluh kemampuan (*abilities*) baru di `Gate::before` checks.
+   * [RolePermissionSeeder.php](file:///c:/laragon/www/SPK-MOORA/database/seeders/RolePermissionSeeder.php): Otomatis membersihkan data lama dan menyemai (*seed*) hak akses baru ke database MySQL.
+3. **Pemisahan Rute Keamanan**:
+   * [web.php](file:///c:/laragon/www/SPK-MOORA/routes/web.php): Mengganti pembungkus middleware global dengan otorisasi individu (`can:manage_gunung`, `can:manage_terminal`, dll.) sehingga pemblokiran rute bekerja secara mandiri.
+4. **Pembaruan Layout Navigasi**:
+   * [sidebar.blade.php](file:///c:/laragon/www/SPK-MOORA/resources/views/layouts/sidebar.blade.php): Menggunakan kombinasi `@canany` untuk *sidebar headers* dan `@can` individu pada elemen menu `<li>`.
+5. **Pengujian Unit & Integrasi**:
+   * [PermissionTest.php](file:///c:/laragon/www/SPK-MOORA/tests/Feature/PermissionTest.php): Menyesuaikan dan menjalankan test suite PHPUnit untuk memastikan seluruh uji izin akses berjalan sukses.

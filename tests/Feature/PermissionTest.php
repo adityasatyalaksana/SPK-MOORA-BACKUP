@@ -73,19 +73,19 @@ class PermissionTest extends TestCase
             'role_id' => $adminRole->id,
         ]);
 
-        // 2. Initially Admin has 'manage_moora' access (which maps to /admin/hasil)
+        // 2. Initially Admin has 'view_hasil' access (which maps to /admin/hasil)
         $response = $this->actingAs($admin)->get('/admin/hasil');
         $response->assertStatus(200);
 
-        // 3. Superadmin disables 'manage_moora' permission for Admin role
-        // 'manage_master_data' permission ID
-        $masterDataPerm = Permission::where('name', 'manage_master_data')->first();
+        // 3. Superadmin disables 'view_hasil' permission for Admin role
+        // 'manage_gunung' permission ID
+        $gunungPerm = Permission::where('name', 'manage_gunung')->first();
         
-        // Post updated permissions (only keep manage_master_data for Admin)
+        // Post updated permissions (only keep manage_gunung for Admin)
         $response = $this->actingAs($superadmin)->post('/admin/users/permissions', [
             'permissions' => [
                 $superadminRole->id => Permission::all()->pluck('id')->toArray(),
-                $adminRole->id => [$masterDataPerm->id]
+                $adminRole->id => [$gunungPerm->id]
             ]
         ]);
         $response->assertRedirect('/admin/users');
@@ -94,7 +94,7 @@ class PermissionTest extends TestCase
         $response = $this->actingAs($admin->fresh())->get('/admin/hasil');
         $response->assertStatus(403);
 
-        // 5. Admin can still access /admin/gunung (manage_master_data)
+        // 5. Admin can still access /admin/gunung (manage_gunung)
         $response = $this->actingAs($admin->fresh())->get('/admin/gunung');
         $response->assertStatus(200);
     }

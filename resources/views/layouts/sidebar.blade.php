@@ -47,62 +47,77 @@
                     </a>
                 </li>
 
-                @can('manage_master_data')
+                @canany(['manage_gunung', 'manage_terminal', 'manage_jalur', 'manage_biaya'])
                     <div class="small text-uppercase text-secondary fw-bold mt-4 mb-2 px-3" style="font-size: 0.75rem; letter-spacing: 1px;">Master Data</div>
                     
+                    @can('manage_gunung')
                     <li class="nav-item mb-1">
                         <a href="/admin/gunung" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/gunung*') ? 'active bg-success' : '' }}">
                             <i class="bi bi-layers me-3"></i> Data Gunung
                         </a>
                     </li>
+                    @endcan
 
+                    @can('manage_terminal')
                     <li class="nav-item mb-1">
                         <a href="/admin/terminal" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/terminal*') ? 'active bg-success' : '' }}">
                             <i class="bi bi-bus-front me-3"></i> Data Terminal
                         </a>
                     </li>
+                    @endcan
 
+                    @can('manage_jalur')
                     <li class="nav-item mb-1">
                         <a href="/admin/jalur" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/jalur*') ? 'active bg-success' : '' }}">
                             <i class="bi bi-signpost-2 me-3"></i> Data Jalur
                         </a>
                     </li>
+                    @endcan
 
+                    @can('manage_biaya')
                     <li class="nav-item mb-1">
                         <a href="/admin/biaya" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/biaya*') ? 'active bg-success' : '' }}">
                             <i class="bi bi-wallet2 me-3"></i> Data Biaya
                         </a>
                     </li>
-                @endcan
+                    @endcan
+                @endcanany
 
-                @can('manage_moora')
+                @canany(['manage_kriteria', 'manage_sub_kriteria', 'manage_penilaian', 'view_hasil'])
                     <div class="small text-uppercase text-secondary fw-bold mt-4 mb-2 px-3" style="font-size: 0.75rem; letter-spacing: 1px;">Metode Moora</div>
                     
+                    @can('manage_kriteria')
                     <li class="nav-item mb-1">
                         <a href="/admin/kriteria" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/kriteria*') ? 'active bg-success' : '' }}">
                             <i class="bi bi-list-check me-3"></i> Data Kriteria
                         </a>
                     </li>
+                    @endcan
 
-                    {{-- Menu Baru: Data Sub-Kriteria --}}
+                    @can('manage_sub_kriteria')
                     <li class="nav-item mb-1">
                         <a href="/admin/sub-kriteria" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/sub-kriteria*') ? 'active bg-success' : '' }}">
                             <i class="bi bi-list-nested me-3"></i> Data Sub-Kriteria
                         </a>
                     </li>
+                    @endcan
 
+                    @can('manage_penilaian')
                     <li class="nav-item mb-1">
                         <a href="/admin/penilaian" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/penilaian*') ? 'active bg-success' : '' }}">
                             <i class="bi bi-pencil-square me-3"></i> Data Penilaian
                         </a>
                     </li>
+                    @endcan
 
+                    @can('view_hasil')
                     <li class="nav-item mb-1">
                         <a href="/admin/hasil" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/hasil*') ? 'active bg-success' : '' }}">
                             <i class="bi bi-calculator me-3"></i> Hasil Perhitungan
                         </a>
                     </li>
-                @endcan
+                    @endcan
+                @endcanany
 
                 @canany(['manage_users', 'view_logs'])
                     <div class="small text-uppercase text-secondary fw-bold mt-4 mb-2 px-3" style="font-size: 0.75rem; letter-spacing: 1px;">Pengaturan Sistem</div>

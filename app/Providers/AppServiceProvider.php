@@ -24,7 +24,18 @@ class AppServiceProvider extends ServiceProvider
     {
         // Define dynamic permission gates using Gate::before to support dynamic loading and testing
         Gate::before(function ($user, $ability) {
-            $permissions = ['manage_users', 'view_logs', 'manage_master_data', 'manage_moora'];
+            $permissions = [
+                'manage_users',
+                'view_logs',
+                'manage_gunung',
+                'manage_terminal',
+                'manage_jalur',
+                'manage_biaya',
+                'manage_kriteria',
+                'manage_sub_kriteria',
+                'manage_penilaian',
+                'view_hasil'
+            ];
             if (in_array($ability, $permissions)) {
                 try {
                     return $user->role && $user->role->permissions->contains('name', $ability);

@@ -18,12 +18,21 @@ class RolePermissionSeeder extends Seeder
         $superadmin = Role::firstOrCreate(['name' => 'Superadmin']);
         $admin = Role::firstOrCreate(['name' => 'Admin']);
 
+        // Clean up old permissions if they exist
+        Permission::whereIn('name', ['manage_master_data', 'manage_moora'])->delete();
+
         // 2. Create Permissions
         $permissions = [
             'manage_users' => 'Kelola Akun Admin',
             'view_logs' => 'Melihat Log Aktivitas',
-            'manage_master_data' => 'Mengelola Data Gunung, Terminal, Jalur, Biaya',
-            'manage_moora' => 'Mengelola Kriteria, Penilaian & Hasil',
+            'manage_gunung' => 'Mengelola Data Gunung',
+            'manage_terminal' => 'Mengelola Data Terminal',
+            'manage_jalur' => 'Mengelola Data Jalur',
+            'manage_biaya' => 'Mengelola Data Biaya & Armada',
+            'manage_kriteria' => 'Mengelola Data Kriteria',
+            'manage_sub_kriteria' => 'Mengelola Data Sub-Kriteria',
+            'manage_penilaian' => 'Mengelola Penilaian Alternatif',
+            'view_hasil' => 'Melihat Hasil Perangkingan MOORA',
         ];
 
         $permissionModels = [];
@@ -38,10 +47,16 @@ class RolePermissionSeeder extends Seeder
         // Superadmin gets everything
         $superadmin->permissions()->sync(array_column($permissionModels, 'id'));
 
-        // Admin gets master data and moora
+        // Admin gets master data and moora menus individually
         $admin->permissions()->sync([
-            $permissionModels['manage_master_data']->id,
-            $permissionModels['manage_moora']->id,
+            $permissionModels['manage_gunung']->id,
+            $permissionModels['manage_terminal']->id,
+            $permissionModels['manage_jalur']->id,
+            $permissionModels['manage_biaya']->id,
+            $permissionModels['manage_kriteria']->id,
+            $permissionModels['manage_sub_kriteria']->id,
+            $permissionModels['manage_penilaian']->id,
+            $permissionModels['view_hasil']->id,
         ]);
 
         // 4. Update Existing Users to roles

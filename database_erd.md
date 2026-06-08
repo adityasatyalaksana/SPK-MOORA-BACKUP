@@ -161,7 +161,7 @@ erDiagram
 *   **`users`**: Menyimpan akun pengguna (Superadmin, Admin) yang memiliki kredensial login (`username`, `password`).
     *   *Relasi*: Terhubung ke tabel `roles` melalui `role_id` (Many-to-One).
 *   **`roles`**: Menyimpan peran pengguna (contoh: `Superadmin`, `Admin`).
-*   **`permissions`**: Menyimpan daftar hak akses spesifik (contoh: `manage_users`, `view_logs`, `manage_master_data`, `manage_moora`).
+*   **`permissions`**: Menyimpan daftar hak akses spesifik (contoh: `manage_users`, `view_logs`, `manage_gunung`, `manage_kriteria`, `view_hasil`).
 *   **`role_permission`**: Tabel pivot penghubung Many-to-Many antara `roles` dan `permissions`.
 
 ### 2. Tabel Utama Pendakian & Transportasi (Master Data)

@@ -58,8 +58,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // 1. Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    // 2. Master Data (Protected by manage_master_data)
-    Route::middleware(['can:manage_master_data'])->group(function () {
+    // 2. Master Data (Protected by individual resource permissions)
+    Route::middleware(['can:manage_gunung'])->group(function () {
         Route::resource('gunung', GunungController::class)->names([
             'index'   => 'admin.gunung.index',
             'create'  => 'gunung.create',
@@ -69,20 +69,26 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
             'destroy' => 'gunung.destroy',
         ]);
         Route::delete('gunung/{id}/delete-image', [GunungController::class, 'deleteImage'])->name('gunung.delete-image');
+    });
 
+    Route::middleware(['can:manage_terminal'])->group(function () {
         Route::resource('terminal', TerminalController::class)->names([
             'index'   => 'admin.terminal.index',
             'store'   => 'terminal.store',
             'update'  => 'terminal.update',
             'destroy' => 'terminal.destroy',
         ]);
+    });
 
+    Route::middleware(['can:manage_jalur'])->group(function () {
         Route::resource('jalur', JalurController::class)->names([
             'index'   => 'admin.jalur.index',
             'store'   => 'jalur.store',
             'destroy' => 'jalur.destroy',
         ]);
+    });
 
+    Route::middleware(['can:manage_biaya'])->group(function () {
         Route::resource('biaya', BiayaController::class)->names([
             'index'   => 'admin.biaya.index',
             'store'   => 'biaya.store',
@@ -92,23 +98,30 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('biaya/reset-period/{id}', [BiayaController::class, 'resetPeriod'])->name('biaya.reset_period');
     });
 
-    // 3. Metode MOORA (Protected by manage_moora)
-    Route::middleware(['can:manage_moora'])->group(function () {
+    // 3. Metode MOORA (Protected by individual MOORA permissions)
+    Route::middleware(['can:manage_kriteria'])->group(function () {
         Route::resource('kriteria', KriteriaController::class)->names([
             'index' => 'admin.kriteria.index',
         ]);
+    });
 
+    Route::middleware(['can:manage_sub_kriteria'])->group(function () {
         Route::resource('sub-kriteria', SubKriteriaController::class)->names([
             'index'   => 'admin.sub-kriteria.index',
             'store'   => 'sub-kriteria.store',
             'update'  => 'sub-kriteria.update',
             'destroy' => 'sub-kriteria.destroy',
         ]);
+    });
 
+    Route::middleware(['can:manage_penilaian'])->group(function () {
         Route::get('/penilaian', [PenilaianController::class, 'index'])->name('admin.penilaian.index');
+        // Let's keep store and destroy endpoints protected under manage_penilaian
         Route::post('/penilaian', [PenilaianController::class, 'store'])->name('admin.penilaian.store');
         Route::delete('/penilaian/destroy/{jalur}/{biaya}', [PenilaianController::class, 'destroy'])->name('admin.penilaian.destroy');
-        
+    });
+
+    Route::middleware(['can:view_hasil'])->group(function () {
         Route::get('/hasil', [HasilController::class, 'index'])->name('hasil.perhitungan');
     });
 
