@@ -12,9 +12,8 @@ class SubKriteriaController extends Controller
 {
     public function index()
     {
-        $subkriterias = SubKriteria::with('kriteria')->get();
-        $kriterias = Kriteria::all();
-        return view('admin.sub_kriteria.index', compact('subkriterias', 'kriterias'));
+        $kriterias = Kriteria::with('subKriterias')->get();
+        return view('admin.sub_kriteria.index', compact('kriterias'));
     }
 
     public function store(Request $request)

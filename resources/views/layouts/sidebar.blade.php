@@ -43,7 +43,7 @@
                 
                 <li class="nav-item mb-1">
                     <a href="/admin/dashboard" class="nav-link text-white py-2 d-flex align-items-center {{ Request::is('admin/dashboard') ? 'active bg-success shadow' : '' }}">
-                        <i class="bi bi-speedometer2 me-3"></i> Dashboard Admin
+                        <i class="bi bi-speedometer2 me-3"></i> Dashboard
                     </a>
                 </li>
 

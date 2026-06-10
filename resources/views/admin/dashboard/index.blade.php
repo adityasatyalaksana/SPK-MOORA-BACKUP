@@ -70,6 +70,10 @@
     .widget-jalur::before { background-color: #06b6d4; }
     .widget-kriteria::before { background-color: #6366f1; }
     .widget-user::before { background-color: #f59e0b; }
+    .widget-terminal::before { background-color: #0284c7; }
+    .widget-biaya::before { background-color: #a855f7; }
+    .widget-penilaian::before { background-color: #ec4899; }
+    .widget-log::before { background-color: #64748b; }
 
     .icon-badge {
         width: 52px;
@@ -85,6 +89,10 @@
     .badge-jalur { background-color: #ecfeff; color: #06b6d4; }
     .badge-kriteria { background-color: #eef2ff; color: #6366f1; }
     .badge-user { background-color: #fffbeb; color: #f59e0b; }
+    .badge-terminal { background-color: #f0f9ff; color: #0284c7; }
+    .badge-biaya { background-color: #faf5ff; color: #a855f7; }
+    .badge-penilaian { background-color: #fdf2f8; color: #ec4899; }
+    .badge-log { background-color: #f1f5f9; color: #64748b; }
 
     .card-premium {
         background: #ffffff;
@@ -125,28 +133,18 @@
         filter: brightness(1.05);
     }
 
-    .action-btn-custom:hover, .action-btn-custom:focus {
-        color: #ffffff;
+    .bg-purple-subtle {
+        background-color: #faf5ff !important;
+        color: #a855f7 !important;
+        border: 1px solid rgba(168, 85, 247, 0.2) !important;
     }
 
-    .quick-action-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 16px;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        color: #1e293b;
-    }
-
-    .quick-action-card:hover {
-        background: #ffffff;
-        border-color: #10b981;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transform: translateY(-2px);
-        color: #10b981;
+    /* custom grid for 5 columns on medium and large screens */
+    @media (min-width: 768px) {
+        .col-md-2-5 {
+            flex: 0 0 20%;
+            max-width: 20%;
+        }
     }
 </style>
 
@@ -170,10 +168,61 @@
         </div>
     </div>
 
+    <!-- 3 Besar Alternatif Rute Terbaik (MOORA) -->
+    @if(!empty($topAlternatives))
+    <div class="card card-premium border-0 shadow-sm mb-4">
+        <div class="card-premium-header bg-dark text-white p-3 d-flex align-items-center justify-content-between">
+            <h6 class="m-0 fw-bold d-flex align-items-center text-white">
+                <i class="bi bi-trophy-fill text-warning me-2 fs-5"></i>
+                3 Besar Rute Terbaik (Rekomendasi Utama Hasil MOORA)
+            </h6>
+            <a href="{{ route('hasil.perhitungan') }}" class="btn btn-sm btn-outline-light" style="border-radius: 8px;">Detail Perhitungan</a>
+        </div>
+        <div class="card-body p-4">
+            <div class="row">
+                @foreach($topAlternatives as $index => $alt)
+                    @php
+                        $medals = [
+                            0 => ['icon' => 'bi-award-fill', 'color' => '#eab308', 'bg' => '#fef9c3', 'label' => 'Rekomendasi Utama'],
+                            1 => ['icon' => 'bi-award-fill', 'color' => '#64748b', 'bg' => '#f1f5f9', 'label' => 'Peringkat 2'],
+                            2 => ['icon' => 'bi-award-fill', 'color' => '#b45309', 'bg' => '#ffedd5', 'label' => 'Peringkat 3']
+                        ];
+                        $medal = $medals[$index];
+                    @endphp
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="p-3 rounded-4 border h-100 d-flex flex-column justify-content-between" style="background-color: {{ $medal['bg'] }}; border-color: rgba(0,0,0,0.05) !important;">
+                            <div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge px-3 py-2 rounded-pill d-inline-flex align-items-center gap-1 small fw-bold" style="background-color: #ffffff; color: {{ $medal['color'] }}; border: 1px solid rgba(0,0,0,0.05); font-size: 0.72rem;">
+                                        <i class="bi {{ $medal['icon'] }} fs-6"></i> {{ $medal['label'] }}
+                                    </span>
+                                    <span class="fw-bold fs-5" style="color: {{ $medal['color'] }};">#{{ $index + 1 }}</span>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Gn. {{ $alt['nama_gunung'] }}</h5>
+                                <p class="text-secondary small mb-2">Via {{ $alt['nama_jalur'] }}</p>
+                                <div class="text-muted small mb-3">
+                                    <i class="bi bi-bus-front me-1 text-primary"></i> <strong>{{ $alt['nama_armada'] }}</strong> <br>
+                                    <span class="text-secondary d-inline-block mt-1" style="font-size: 0.75rem;">
+                                        ({{ $alt['start_terminal'] }} &rarr; {{ $alt['end_terminal'] }})
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">Skor Optimasi:</span>
+                                <span class="fw-bold text-dark font-monospace">{{ number_format($alt['skor'], 4) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Statistics Cards -->
     <div class="row mb-4">
         <!-- Card Gunung -->
-        <div class="col-md-3 col-sm-6 mb-3">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
             <div class="stat-widget widget-gunung h-100">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -188,7 +237,7 @@
         </div>
 
         <!-- Card Jalur -->
-        <div class="col-md-3 col-sm-6 mb-3">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
             <div class="stat-widget widget-jalur h-100">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -202,8 +251,53 @@
             </div>
         </div>
 
+        <!-- Card Terminal -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="stat-widget widget-terminal h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small text-uppercase fw-bold mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Terminal Transit</div>
+                        <h3 class="fw-bold mb-0 text-dark">{{ $data['total_terminal'] }}</h3>
+                    </div>
+                    <div class="icon-badge badge-terminal">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Armada Bus -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="stat-widget widget-biaya h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small text-uppercase fw-bold mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Armada &amp; Tarif</div>
+                        <h3 class="fw-bold mb-0 text-dark">{{ $data['total_biaya'] }}</h3>
+                    </div>
+                    <div class="icon-badge badge-biaya">
+                        <i class="bi bi-bus-front"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Penilaian Terisi -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="stat-widget widget-penilaian h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small text-uppercase fw-bold mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Penilaian Terisi</div>
+                        <h3 class="fw-bold mb-0 text-dark">{{ $data['total_penilaian'] }}</h3>
+                    </div>
+                    <div class="icon-badge badge-penilaian">
+                        <i class="bi bi-check2-square"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Card Kriteria -->
-        <div class="col-md-3 col-sm-6 mb-3">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
             <div class="stat-widget widget-kriteria h-100">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -218,7 +312,7 @@
         </div>
 
         <!-- Card Users -->
-        <div class="col-md-3 col-sm-6 mb-3">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
             <div class="stat-widget widget-user h-100">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -231,48 +325,38 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Main Section -->
-    <div class="row">
-        <!-- Left Column: Pie Chart -->
-        <div class="col-xl-4 col-lg-5 mb-4">
-            <div class="card-premium h-100">
-                <div class="card-premium-header">
-                    <h6 class="m-0 fw-bold text-dark"><i class="bi bi-pie-chart me-2 text-success"></i>Proporsi Bobot Kriteria</h6>
-                </div>
-                <div class="card-body p-4 d-flex flex-column justify-content-between">
-                    <div class="chart-container" style="position: relative; height:240px;">
-                        <canvas id="kriteriaPieChart"></canvas>
+        <!-- Card Log Aktivitas -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="stat-widget widget-log h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small text-uppercase fw-bold mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Log Aktivitas</div>
+                        <h3 class="fw-bold mb-0 text-dark">{{ $data['total_logs'] }}</h3>
                     </div>
-                    <div class="text-center small mt-4 p-2 bg-light rounded border">
-                        <span class="text-muted"><i class="bi bi-circle-fill text-success me-1" style="font-size: 0.5rem; vertical-align: middle;"></i> Data terintegrasi dengan perhitungan MOORA</span>
+                    <div class="icon-badge badge-log">
+                        <i class="bi bi-clock-history"></i>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Right Column: Info & Quick Actions -->
-        <div class="col-xl-8 col-lg-7 mb-4">
-            <div class="card-premium h-100 p-4">
-                <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-info-circle me-2 text-success"></i>Tentang Implementasi Sistem</h5>
-                
-                <div class="info-alert mb-4">
-                    <h6 class="fw-bold text-success mb-2">Metode MOORA Teroptimasi</h6>
-                    <p class="mb-2 text-secondary" style="font-size: 0.95rem;">Sistem pendukung keputusan ini menggunakan metode **MOORA (Multi-Objective Optimization on the basis of Ratio Analysis)** dengan pendekatan **Sinkronisasi Nilai Preferensi Positif (Full Benefit Criteria)**.</p>
-                    <p class="mb-0 text-muted small">Seluruh parameter penilaian ditransformasikan menjadi tipe kriteria keuntungan, di mana kondisi paling ideal bagi pendaki dikonversi menjadi bobot preferensi tertinggi:</p>
-                    <ul class="mt-2 mb-0 fw-bold text-secondary" style="font-size: 0.85rem; list-style: none; padding-left: 0;">
-                        <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i> Nilai Maksimum (Skor 5): Biaya paling murah, waktu paling efisien, dan rute ideal.</li>
-                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Nilai Minimum (Skor 1): Biaya tinggi, waktu perjalanan lama, atau medan pendakian berat.</li>
-                    </ul>
+    <!-- Main Section -->
+    <div class="row">
+        <!-- Wide Column: Horizontal Bar Chart -->
+        <div class="col-12 mb-4">
+            <div class="card-premium h-100">
+                <div class="card-premium-header">
+                    <h6 class="m-0 fw-bold text-dark"><i class="bi bi-bar-chart-line-fill me-2 text-success"></i>Perbandingan Bobot Kriteria (Horizontal Bar Chart)</h6>
                 </div>
-
-
-
-                <div class="text-center pt-2">
-                    <a href="{{ route('hasil.perhitungan') }}" class="action-btn-custom btn w-100 py-3">
-                        <i class="bi bi-calculator me-2"></i> Jalankan Perhitungan MOORA Sekarang
-                    </a>
+                <div class="card-body p-4">
+                    <div class="chart-container" style="position: relative; height:320px;">
+                        <canvas id="kriteriaBarChart"></canvas>
+                    </div>
+                    <div class="text-center small mt-4 p-2 bg-light rounded border">
+                        <span class="text-muted"><i class="bi bi-circle-fill text-success me-1" style="font-size: 0.5rem; vertical-align: middle;"></i> Data bobot kriteria terintegrasi secara dinamis dengan metode MOORA</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -281,33 +365,46 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('kriteriaPieChart').getContext('2d');
+    const ctx = document.getElementById('kriteriaBarChart').getContext('2d');
     new Chart(ctx, {
-        type: 'doughnut',
+        type: 'bar',
         data: {
             labels: @json($chartLabels),
             datasets: [{
+                label: 'Bobot Kriteria',
                 data: @json($chartWeights),
                 backgroundColor: ['#10b981', '#06b6d4', '#6366f1', '#f59e0b', '#ef4444', '#64748b'],
                 hoverBackgroundColor: ['#059669', '#0891b2', '#4f46e5', '#d97706', '#dc2626', '#475569'],
-                hoverBorderColor: "rgba(255, 255, 255, 1)",
+                borderRadius: 8,
+                borderSkipped: false,
+                barThickness: 24
             }],
         },
         options: {
+            indexAxis: 'y',
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 15, font: { family: 'Outfit', size: 11 } } },
+                legend: { display: false },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            let label = context.label || '';
-                            let value = context.parsed !== undefined ? context.parsed : context.raw;
+                            let label = context.dataset.label || '';
+                            let value = context.parsed.x !== undefined ? context.parsed.x : context.raw;
                             return ' ' + label + ': ' + Number(value).toFixed(2);
                         }
                     }
                 }
             },
-            cutout: '70%',
+            scales: {
+                x: {
+                    grid: { color: '#f1f5f9' },
+                    ticks: { font: { family: 'Outfit', size: 12 }, color: '#64748b' }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { font: { family: 'Outfit', size: 12, weight: '500' }, color: '#1e293b' }
+                }
+            }
         },
     });
 </script>

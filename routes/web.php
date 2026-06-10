@@ -138,5 +138,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // 9. Log Aktivitas
     Route::get('/logs', [ActivityLogController::class, 'index'])->name('admin.logs.index')->middleware('can:view_logs');
+    Route::get('/logs/export', [ActivityLogController::class, 'export'])->name('admin.logs.export')->middleware('can:view_logs');
+    Route::post('/logs/clear', [ActivityLogController::class, 'clear'])->name('admin.logs.clear')->middleware('can:view_logs');
 
 });

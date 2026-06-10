@@ -80,6 +80,9 @@ graph LR
     Superadmin --> M_Penilaian
     Superadmin --> M_User
     Superadmin --> View_Log
+    Superadmin --> V_Profile
+    Superadmin --> Cari_Rekomendasi
+    Superadmin --> Cetak_PDF
 
     %% Relasi Aktor Kanan (Pendaki/Guest)
     V_Profile --> Pendaki
