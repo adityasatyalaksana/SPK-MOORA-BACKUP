@@ -365,6 +365,38 @@
         </div>
     </div>
 
+    <!-- FILTER ANALYSIS CARD (d-print-none) -->
+    <div class="card border-0 shadow-sm mb-4 d-print-none" style="border-radius: 12px;">
+        <div class="card-body p-4">
+            <form action="{{ route('admin.hasil.index') }}" method="GET" class="row align-items-center g-3">
+                <div class="col-12 col-md-8">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-funnel-fill text-primary fs-4"></i>
+                        <div>
+                            <h6 class="fw-bold text-dark m-0">Filter Analisis Rute</h6>
+                            <small class="text-muted">Pilih Gunung untuk memfilter alternatif rute dan armada yang dihitung dalam perangkingan MOORA.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="input-group">
+                        <select name="gunung_id" class="form-select border-secondary-subtle" style="border-radius: 8px 0 0 8px; font-weight: 600;">
+                            <option value="">-- Semua Gunung --</option>
+                            @foreach($gunungs as $g)
+                                <option value="{{ $g->id }}" {{ request('gunung_id') == $g->id ? 'selected' : '' }}>
+                                    Gn. {{ $g->nama_gunung }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <button type="submit" class="btn btn-primary fw-bold px-4" style="border-radius: 0 8px 8px 0;">
+                            <i class="bi bi-play-fill me-1"></i>Analisis
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- SUMMARY WIDGET CARDS (d-print-none) -->
     <div class="row g-3 mb-4 d-print-none">
         <!-- Card 1: Total Alternatif -->

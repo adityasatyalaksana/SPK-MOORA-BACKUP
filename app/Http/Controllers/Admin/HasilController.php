@@ -11,9 +11,10 @@ use App\Models\Biaya;
 
 class HasilController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $kriterias = Kriteria::all();
+        $gunungs = \App\Models\Gunung::all();
         $penilaians = Penilaian::with([
             'jalur.gunung', 
             'biaya.start_terminal', 
@@ -29,7 +30,8 @@ class HasilController extends Controller
                 'normalisasi' => [],
                 'terbobot' => [],
                 'pembagi' => [],
-                'alternatifs' => []
+                'alternatifs' => [],
+                'gunungs' => $gunungs
             ]);
         }
 
@@ -41,6 +43,15 @@ class HasilController extends Controller
 
         foreach ($groupedPenilaian as $key => $items) {
             $first = $items->first();
+            if (!$first->jalur || !$first->biaya) {
+                continue;
+            }
+
+            // Filter by Gunung if selected
+            if ($request->filled('gunung_id') && $first->jalur->gunung_id != $request->query('gunung_id')) {
+                continue;
+            }
+
             $alternatifs[$key] = [
                 'jalur_id' => $first->jalur_id,
                 'biaya_id' => $first->biaya_id,
@@ -51,6 +62,19 @@ class HasilController extends Controller
                 'end_terminal' => $first->biaya->end_terminal->nama_terminal ?? '-',
                 'items' => $items
             ];
+        }
+
+        if (empty($alternatifs)) {
+            return view('admin.hasil.index', [
+                'kriterias' => $kriterias,
+                'hasil' => [],
+                'matriks' => [],
+                'normalisasi' => [],
+                'terbobot' => [],
+                'pembagi' => [],
+                'alternatifs' => [],
+                'gunungs' => $gunungs
+            ]);
         }
 
         // 1. Hitung Pembagi (Normalization Denominator) untuk masing-masing kriteria
@@ -139,6 +163,6 @@ class HasilController extends Controller
         // Urutkan Ranking dari skor tertinggi ke terendah
         usort($hasil, fn($a, $b) => $b['skor'] <=> $a['skor']);
 
-        return view('admin.hasil.index', compact('kriterias', 'matriks', 'normalisasi', 'terbobot', 'hasil', 'pembagi', 'alternatifs'));
+        return view('admin.hasil.index', compact('kriterias', 'matriks', 'normalisasi', 'terbobot', 'hasil', 'pembagi', 'alternatifs', 'gunungs'));
     }
 }
