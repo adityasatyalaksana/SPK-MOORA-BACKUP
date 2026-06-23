@@ -368,7 +368,7 @@
     <!-- FILTER ANALYSIS CARD (d-print-none) -->
     <div class="card border-0 shadow-sm mb-4 d-print-none" style="border-radius: 12px;">
         <div class="card-body p-4">
-            <form action="{{ route('admin.hasil.index') }}" method="GET" class="row align-items-center g-3">
+            <form action="{{ route('hasil.perhitungan') }}" method="GET" class="row align-items-center g-3">
                 <div class="col-12 col-md-8">
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-funnel-fill text-primary fs-4"></i>
