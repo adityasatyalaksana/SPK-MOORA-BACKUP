@@ -9,92 +9,160 @@ Dalam diagram ini, seluruh proses terjadi di dalam lingkup internal sistem aplik
 
 ---
 
-## Activity Diagram Sistem SPK-MOORA (3 Kolom)
+### Activity Diagram Sistem SPK-MOORA (3 Kolom Gabungan)
 
 ### Ilustrasi Visual
-![Activity Diagram SPK-MOORA 3 Kolom](/C:/Users/SATYA/.gemini/antigravity-ide/brain/8e28ec10-b59e-4ef4-b608-37fdaddca1c1/diagram_sistem_berjalan_gabungan_1780737103276.png)
+![Activity Diagram Gabungan](combined_activity_diagram.png)
 
 ### Alur Diagram (Mermaid)
 ```mermaid
-graph TD
-    subgraph AktorPendaki [Pendaki]
-        OpenWeb[Membuka Halaman Cari Rekomendasi] --> InputForm[Menginput Budget, Jumlah Anggota,<br>Tanggal Keberangkatan & Terminal Awal]
-        InputForm --> ClickSearch[Klik Tombol Cari Rekomendasi]
-        ShowResults --> SelectRoute[Klik Detail Estimasi Budget<br>Pilihan Rute yang Ideal]
-        SelectRoute --> ClickPrint[Klik Cetak Rincian Biaya PDF]
+flowchart TD
+    %% Define subgraphs in order (Left, Middle, Right)
+    subgraph KolomAdmin [Admin]
+        direction TB
+        LoginAdmin[Login Sistem]
+        
+        %% Vertical fork bar for Admin
+        ForkAdmin[" "]
+        
+        ManageMaster[Mengelola Data Master]
+        ManageCriteria[Mengelola Kriteria & Sub-Kriteria]
+        InputPenilaian[Menginput Penilaian Alternatif]
+        ViewCalculation[Menampilkan Perhitungan MOORA]
+        ManageUsers[Mengelola Data User]
+        ViewLogs[Melihat Log Aktivitas]
+        LogoutAdmin[Logout]
+        
+        %% Force vertical stack alignment in Admin column
+        ManageMaster ~~~ ManageCriteria ~~~ InputPenilaian ~~~ ViewCalculation ~~~ ManageUsers ~~~ ViewLogs ~~~ LogoutAdmin
     end
 
-    subgraph SistemWeb [Sistem SPK-MOORA]
-        ClickSearch --> Validate{Validasi Input?}
-        Validate -- Tidak Valid --> ShowError[Kembalikan Pesan Error Validasi]
-        Validate -- Valid --> FilterBudget[Saring Rute Transportasi & Simaksi<br>Total Estimasi <= Budget]
+    subgraph KolomSistem [Sistem]
+        direction TB
+        StartNode((Mulai))
+        ValidateLogin{Valid?}
+        ShowDashboard[Menampilkan Dashboard]
         
-        FilterBudget --> CheckRoutes{Ada Rute Lolos?}
-        CheckRoutes -- Tidak Ada --> ShowEmpty[Tampilkan Info: Rute Tidak Ditemukan]
-        
-        CheckRoutes -- Ya --> CalculateMOORA[Hitung Perangkingan MOORA:<br>Normalisasi Matriks & Perkalian Bobot Kriteria]
-        
-        CalculateMOORA --> SortResults[Urutkan Rekomendasi berdasarkan Skor Yi terbesar]
-        SortResults --> ShowResults
-        
-        ClickPrint --> PrintWindow[Cetak PDF A4<br>Detail Gunung, Terminal, & Rincian Budget]
-        PrintWindow --> EndSystem([Selesai])
-        
-        SaveDB[Menyimpan Data ke Database MySQL] --> OpenWeb
+        JoinEnd["   "]
+        EndNode(((Selesai)))
     end
 
-    subgraph AktorAdmin [Admin]
-        StartAdmin([Mulai]) --> LoginAdmin[Melakukan Login Admin]
-        LoginAdmin --> ManageData[Kelola Data:<br>Gunung, Jalur, Terminal, & Biaya Tiket Bus]
-        ManageData --> ManageCriteria[Kelola Bobot Kriteria & Sub-Kriteria]
-        ManageCriteria --> InputRatings[Input Nilai Penilaian Alternatif<br>Matriks Keputusan Awal]
-        InputRatings --> SaveDB
+    subgraph KolomPendaki [Pendaki]
+        direction TB
+        AksesWeb[Akses Halaman Utama]
+        
+        %% Vertical fork bar for Pendaki
+        ForkPendaki[" "]
+        
+        ViewProfile[Melihat Profil Gunung]
+        SearchRecommendation[Membuka Halaman Cari Rekomendasi]
+        InputBudget[Menginput Budget & Parameter]
+        ViewResults[Menampilkan Rekomendasi Terurut]
+        PrintPDF[Mencetak Rincian Biaya PDF]
+        ExitPendaki[Keluar]
+        
+        %% Force vertical stack alignment in Pendaki column
+        ViewProfile ~~~ SearchRecommendation ~~~ InputBudget ~~~ ViewResults ~~~ PrintPDF ~~~ ExitPendaki
     end
 
-    ShowError --> InputForm
-    ShowEmpty --> OpenWeb
+    %% Styles for vertical fork/join bars
+    style ForkAdmin fill:#000,stroke:#000,stroke-width:1px,width:6px,height:260px
+    style ForkPendaki fill:#000,stroke:#000,stroke-width:1px,width:6px,height:220px
+    style JoinEnd fill:#000,stroke:#000,stroke-width:1px,color:#fff,height:6px,width:400px
 
-    %% Styles
+    %% Top Fork Bar
+    ForkStart["   "]
+    style ForkStart fill:#000,stroke:#000,stroke-width:1px,color:#fff,height:6px,width:400px
+
+    %% Flow connections
+    StartNode --> ForkStart
+    
+    ForkStart --> LoginAdmin
+    ForkStart --> AksesWeb
+
+    %% Admin Flow
+    LoginAdmin --> ValidateLogin
+    ValidateLogin -- Tidak --> LoginAdmin
+    ValidateLogin -- Ya --> ShowDashboard
+    
+    ShowDashboard --> ForkAdmin
+    
+    ForkAdmin --> ManageMaster
+    ForkAdmin --> ManageCriteria
+    ForkAdmin --> InputPenilaian
+    ForkAdmin --> ViewCalculation
+    ForkAdmin --> ManageUsers
+    ForkAdmin --> ViewLogs
+    ForkAdmin --> LogoutAdmin
+    
+    LogoutAdmin --> JoinEnd
+
+    %% Pendaki Flow
+    AksesWeb --> ForkPendaki
+    
+    ForkPendaki --> ViewProfile
+    ForkPendaki --> SearchRecommendation
+    ForkPendaki --> InputBudget
+    ForkPendaki --> ViewResults
+    ForkPendaki --> PrintPDF
+    ForkPendaki --> ExitPendaki
+    
+    ExitPendaki --> JoinEnd
+
+    JoinEnd --> EndNode
+
+    %% Invisible alignment links to force side-by-side columns and row ranking
+    LoginAdmin ~~~ StartNode
+    StartNode ~~~ AksesWeb
+    
+    ForkAdmin ~~~ ShowDashboard
+    ShowDashboard ~~~ ForkPendaki
+    
+    LogoutAdmin ~~~ JoinEnd
+    JoinEnd ~~~ ExitPendaki
+
+    %% Styling classes
     classDef startEnd fill:#1e293b,stroke:#0f172a,stroke-width:2px,color:#fff;
     classDef process fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px,color:#1e293b;
     classDef decision fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e;
     
-    class StartAdmin,EndSystem startEnd;
-    class OpenWeb,InputForm,ClickSearch,ShowError,FilterBudget,ShowEmpty,CalculateMOORA,SortResults,ShowResults,SelectRoute,ClickPrint,PrintWindow,LoginAdmin,ManageData,ManageCriteria,InputRatings,SaveDB process;
-    class Validate,CheckRoutes decision;
+    class StartNode,EndNode startEnd;
+    class LoginAdmin,ShowDashboard,ManageMaster,ManageCriteria,InputPenilaian,ViewCalculation,ManageUsers,ViewLogs,LogoutAdmin,AksesWeb,ViewProfile,SearchRecommendation,InputBudget,ViewResults,PrintPDF,ExitPendaki process;
+    class ValidateLogin decision;
 ```
 
 ---
 
-## Penjelasan Alur Proses Kerja Sistem
+## Penjelasan Alur Proses Kerja Sistem Gabungan
 
-Berikut adalah urutan langkah demi langkah berdasarkan diagram aktivitas di atas:
+Berikut adalah urutan langkah demi langkah berdasarkan diagram aktivitas gabungan di atas:
 
-1. **Persiapan Data oleh Admin**:
-   * **Admin** memulai alur kerja dengan masuk ke halaman admin (`Login Admin`).
-   * Admin mengelola master data (`Kelola Data`), termasuk data Gunung, Jalur Pendakian, Terminal transit, dan tarif Biaya tiket bus.
-   * Admin mengatur preferensi kriteria dan bobot kriteria (`Kelola Bobot Kriteria & Sub-Kriteria`).
-   * Admin memasukkan skor penilaian untuk setiap alternatif jalur pendakian berdasarkan kriteria yang ditentukan (`Input Nilai Penilaian Alternatif`).
-   * Nilai-nilai tersebut dikirim ke **Sistem SPK-MOORA** untuk disimpan secara permanen di database MySQL (`Menyimpan Data ke Database MySQL`).
+### 1. Pintu Masuk Sistem (Concurrence / Multi-user)
+Alur sistem dimulai dari titik `Mulai` dan dapat dijalankan secara bersamaan atau mandiri oleh dua aktor utama:
+* **Admin**: Mengakses halaman login admin untuk melakukan pengelolaan data sistem.
+* **Pendaki**: Mengakses halaman publik untuk mencari rekomendasi jalur pendakian tanpa harus login.
 
-2. **Proses Pencarian Rekomendasi oleh Pendaki**:
-   * **Pendaki** membuka antarmuka rekomendasi (`Membuka Halaman Cari Rekomendasi`).
-   * Pendaki memasukkan kriteria pencarian berupa nominal budget, total anggota kelompok, tanggal keberangkatan, dan terminal asal (`Menginput Budget, Jumlah Anggota, Tanggal & Terminal Awal`).
-   * Pendaki mengklik tombol cari rekomendasi (`Klik Tombol Cari Rekomendasi`).
+### 2. Sisi Alur Admin (Mengelola Sistem)
+* **Login**: Admin memasukkan username & password. Sistem memproses validasi:
+  * Jika **tidak valid**, admin kembali ke halaman login.
+  * Jika **valid**, sistem mengarahkan ke halaman `Dashboard Admin`.
+* **Pengelolaan Data**: Dari halaman Dashboard, Admin dapat memilih berbagai menu administrasi:
+  * Mengelola Data Gunung, Terminal, Jalur, dan Biaya tiket bus.
+  * Mengatur Kriteria & Sub-Kriteria serta bobotnya.
+  * Memasukkan Nilai Penilaian Alternatif untuk matriks keputusan awal MOORA.
+  * Mengelola Data User dan hak akses hak otorisasi.
+  * Melihat dan memantau Log Aktivitas.
+* **Selesai**: Setelah selesai beraktivitas, Admin mengklik tombol `Logout / Keluar` untuk mengakhiri sesi dan alur selesai.
 
-3. **Perhitungan & Filter oleh Sistem**:
-   * **Sistem SPK-MOORA** melakukan pemeriksaan data (`Validasi Input?`). Jika tidak valid, pendaki diminta melengkapi kembali inputnya.
-   * Sistem kemudian mencocokkan tanggal keberangkatan (weekday/weekend/event khusus) serta terminal asal untuk menyaring rute transportasi dan biaya simaksi (`Saring Rute Transportasi & Simaksi`). Jalur yang memiliki total estimasi biaya lebih besar dari budget pendaki akan langsung disaring keluar.
-   * Sistem mengecek apakah ada rute yang lolos filter budget (`Ada Rute Lolos?`). Jika tidak ada, sistem mengembalikan informasi bahwa rute tidak ditemukan.
-   * Jika ada rute yang lolos, sistem memproses data matriks alternatif yang lolos menggunakan metode MOORA (`Hitung Perangkingan MOORA`). Proses ini melibatkan normalisasi matriks keputusan awal dan perkalian dengan bobot kriteria yang sebelumnya telah ditentukan oleh Admin.
-   * Hasil kalkulasi diurutkan dari nilai preferensi $Y_i$ terbesar hingga terkecil (`Urutkan Rekomendasi berdasarkan Skor Yi terbesar`).
-   * Sistem menampilkan urutan perangkingan tersebut ke halaman web pendaki (`Menampilkan List Perangkingan Hasil MOORA`).
-
-4. **Pilihan Rute & Cetak PDF**:
-   * **Pendaki** meninjau hasil perangkingan, lalu memilih alternatif terbaik menurutnya dan mengklik tombol detail (`Klik Detail Estimasi Budget`).
-   * Pendaki mengklik tombol cetak (`Klik Cetak Rincian Biaya PDF`).
-   * **Sistem SPK-MOORA** memproses permintaan tersebut dan membuka jendela cetak untuk menghasilkan berkas cetak PDF berformat A4 secara bersih dan responsif (`Cetak PDF A4`).
-   * Alur proses selesai (`Selesai`).
+### 3. Sisi Alur Pendaki (Pencarian Rekomendasi)
+* **Pencarian**: Pendaki membuka halaman rekomendasi dan mengisi formulir (budget, jumlah anggota, tanggal keberangkatan, dan terminal asal), kemudian menekan tombol `Cari Rekomendasi`.
+* **Proses Sistem**: 
+  * Sistem melakukan validasi parameter input. Jika tidak valid, mengembalikan pendaki ke formulir pencarian.
+  * Sistem menyaring rute bus & tarif simaksi yang biayanya masuk dalam anggaran (`Total Estimasi <= Budget`).
+  * Jika tidak ada rute yang lolos filter, pendaki diberi pesan informasi dan dikembalikan ke halaman pencarian.
+  * Jika rute ditemukan, sistem menghitung peringkat menggunakan metode **MOORA** (proses normalisasi matriks keputusan dan perkalian dengan bobot kriteria).
+  * Hasil diurutkan berdasarkan nilai preferensi tertinggi ($Y_i$) dan disajikan kepada Pendaki.
+* **Cetak Rincian**: Pendaki melihat rute yang ideal, mengklik rincian budget, lalu menekan tombol `Cetak PDF`. Sistem akan memproses dan mengunduh berkas rincian biaya berformat PDF A4, dan alur selesai.
 
 ---
 
