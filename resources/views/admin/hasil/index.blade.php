@@ -14,6 +14,18 @@
     
     // Cost criteria codes string (e.g., C1+C2+C5+C6)
     $costCodes = implode('+', $kriterias->filter(fn($k) => strtolower($k->tipe) != 'benefit')->pluck('kode_kriteria')->toArray());
+
+    $totalAlternatifs = count($alternatifs);
+    $totalKriterias = count($kriterias);
+    $topAlternativeName = '-';
+    $topAlternativeSub = '';
+    $topAlternativeSkor = '0.00000';
+    if (!empty($hasil)) {
+        $firstRank = $hasil[0];
+        $topAlternativeName = "Gn. " . $firstRank['nama_gunung'] . " (" . $firstRank['nama_jalur'] . ")";
+        $topAlternativeSub = $firstRank['nama_armada'] . " (" . $firstRank['start_terminal'] . " → " . $firstRank['end_terminal'] . ")";
+        $topAlternativeSkor = number_format($firstRank['skor'], 5, ',', '.');
+    }
 @endphp
 
 <style>
@@ -337,7 +349,7 @@
     </div>
 
     <!-- Header Banner -->
-    <div class="p-4 mb-4 hasil-header shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3 d-print-none">
+    <div class="p-4 mb-4 hasil-header shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3 d-print-none" style="border-radius: 16px;">
         <div>
             <h3 class="fw-bold m-0"><i class="bi bi-calculator me-2"></i>Hasil Perhitungan SPK (Metode MOORA)</h3>
             <p class="opacity-75 small m-0 mt-1">Pemeringkatan rute pendakian dan armada bus berdasarkan optimasi kriteria keuntungan (Benefit) dan biaya (Cost).</p>
@@ -349,6 +361,72 @@
             <div class="bg-white bg-opacity-10 p-2.5 rounded-3 border border-white border-opacity-10 text-end d-none d-lg-block">
                 <span class="text-white fw-bold d-block small">Rumus Optimasi MOORA:</span>
                 <code class="text-warning fw-bold fs-6">Yi = (Σ Max Benefit) - (Σ Min Cost)</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUMMARY WIDGET CARDS (d-print-none) -->
+    <div class="row g-3 mb-4 d-print-none">
+        <!-- Card 1: Total Alternatif -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; border-left: 4px solid #3b82f6 !important;">
+                <div class="card-body d-flex align-items-center justify-content-between py-3">
+                    <div>
+                        <span class="text-muted text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">Total Alternatif</span>
+                        <h4 class="fw-bold text-dark m-0 mt-1">{{ $totalAlternatifs }}</h4>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-2.5 rounded-3 text-primary">
+                        <i class="bi bi-grid-3x3-gap-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Total Kriteria -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; border-left: 4px solid #10b981 !important;">
+                <div class="card-body d-flex align-items-center justify-content-between py-3">
+                    <div>
+                        <span class="text-muted text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">Total Kriteria</span>
+                        <h4 class="fw-bold text-dark m-0 mt-1">{{ $totalKriterias }}</h4>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-2.5 rounded-3 text-success">
+                        <i class="bi bi-list-check fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Rekomendasi Teratas -->
+        <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; border-left: 4px solid #f59e0b !important;">
+                <div class="card-body d-flex align-items-center justify-content-between py-3">
+                    <div style="max-width: 80%;">
+                        <span class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.72rem; letter-spacing: 0.5px;">Rekomendasi Rute</span>
+                        <span class="fw-bold text-dark text-truncate d-block m-0 mt-1" style="font-size: 0.9rem;" title="{{ $topAlternativeName }}">{{ $topAlternativeName }}</span>
+                        @if(!empty($hasil))
+                            <small class="text-muted text-truncate d-block" style="font-size: 0.7rem;">{{ $topAlternativeSub }}</small>
+                        @endif
+                    </div>
+                    <div class="bg-warning bg-opacity-10 p-2.5 rounded-3 text-warning">
+                        <i class="bi bi-trophy-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Nilai Tertinggi -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; border-left: 4px solid #ef4444 !important;">
+                <div class="card-body d-flex align-items-center justify-content-between py-3">
+                    <div>
+                        <span class="text-muted text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">Nilai Tertinggi (Yi)</span>
+                        <h4 class="fw-bold text-success m-0 mt-1">{{ $topAlternativeSkor }}</h4>
+                    </div>
+                    <div class="bg-danger bg-opacity-10 p-2.5 rounded-3 text-danger">
+                        <i class="bi bi-graph-up-arrow fs-4"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -473,25 +551,15 @@
                             </p>
                         </div>
                         
-                        <div class="p-4 bg-white text-center border-bottom">
-                            <h6 class="fw-bold text-start text-dark mb-2">Representasi Matriks Keputusan (X):</h6>
-                            <div class="matrix-scrollable text-center d-flex justify-content-center">
-                                <div class="matrix-wrapper shadow-xs">
-                                    <div class="matrix-label">X =</div>
-                                    <div class="matrix-brackets-container">
-                                        <div class="matrix-bracket-left"></div>
-                                        <div class="matrix-grid" style="grid-template-columns: repeat({{ count($kriterias) }}, 1fr);">
-                                            @foreach($alternatifs as $altKey => $alt)
-                                                @foreach($kriterias as $k)
-                                                    <div>{{ $matriks[$altKey]['nilai'][$k->id] ?? 0 }}</div>
-                                                @endforeach
-                                            @endforeach
-                                        </div>
-                                        <div class="matrix-bracket-right"></div>
-                                    </div>
-                                </div>
+                        <!-- Formula Info Box (Detail) -->
+                        <div class="px-4 pt-4 d-print-none">
+                            <div class="alert alert-info border-0 shadow-xs mb-0 d-flex align-items-center gap-2.5" style="border-radius: 8px; background-color: #f0fdf4; border-left: 4px solid #10b981 !important; color: #065f46;">
+                                <i class="bi bi-info-circle-fill fs-5 text-success"></i>
+                                <span><strong>Rumus kuadrat per kriteria:</strong> &Sigma;(x<sub>ij</sub>)&sup2; = x<sub>1j</sub>&sup2; + x<sub>2j</sub>&sup2; + ... + x<sub>mj</sub>&sup2;</span>
                             </div>
                         </div>
+
+
 
                         <div class="table-responsive">
                             <table class="table table-hover align-middle premium-table mb-0">
@@ -523,6 +591,21 @@
                                     </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr class="text-center table-secondary fw-bold">
+                                        <td colspan="3" class="text-end py-3"><strong>&Sigma;(x<sub>ij</sub>)&sup2;</strong></td>
+                                        @foreach($kriterias as $k)
+                                            @php
+                                                $sumSquares = 0;
+                                                foreach($alternatifs as $altKey => $alt) {
+                                                    $val = $alt['items']->where('kriteria_id', $k->id)->first()->nilai ?? 0;
+                                                    $sumSquares += pow($val, 2);
+                                                }
+                                            @endphp
+                                            <td class="text-dark fw-bold">{{ number_format($sumSquares, 5, ',', '.') }}</td>
+                                        @endforeach
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -538,46 +621,85 @@
                     </button>
                 </h2>
                 <div id="collapseStepTwo" class="accordion-collapse collapse" data-parent="#accordionCalculation">
-                    <div class="accordion-body p-4 bg-white">
-                        <p class="small text-muted mb-4 d-print-none">
-                            <strong>Penjelasan</strong>: Oleh karena setiap kriteria memiliki satuan yang berbeda, data tersebut perlu dinormalisasi ke skala desimal 0 sampai dengan 1 agar dapat dibandingkan secara objektif. 
-                            Pembagi kriteria dihitung menggunakan rumus akar dari jumlah kuadrat seluruh nilai kriteria pada Matriks Keputusan.
-                        </p>
-                        
-                        <h6 class="fw-bold text-dark mb-1">Rumus Normalisasi (X*ij):</h6>
-                        <div class="math-formula-block text-center fs-6 py-3 mb-4">
-                            X*<sub>ij</sub> = x<sub>ij</sub> / &radic;[ &Sigma;<sub>i=1</sub><sup>m</sup> x<sub>ij</sub>&sup2; ]
+                    <div class="accordion-body p-0">
+                        <div class="p-3 bg-light border-bottom d-print-none">
+                            <p class="mb-0 small text-muted">
+                                <strong>Penjelasan</strong>: Oleh karena setiap kriteria memiliki satuan yang berbeda, data tersebut perlu dinormalisasi ke skala desimal 0 sampai dengan 1 agar dapat dibandingkan secara objektif. 
+                                Pembagi kriteria dihitung menggunakan rumus akar dari jumlah kuadrat seluruh nilai kriteria pada Matriks Keputusan.
+                            </p>
                         </div>
-                        
-                        <h6 class="fw-bold text-dark mb-3">Penyebut Normalisasi (&radic;[ &Sigma;<sub>i=1</sub><sup>m</sup> x<sub>ij</sub>&sup2; ]):</h6>
-                        
-                        <div class="row g-4">
-                            @foreach($kriterias as $k)
-                            @php
-                                $squareTerms = [];
-                                $sumSquares = 0;
-                                foreach($alternatifs as $altKey => $alt) {
-                                    $val = $alt['items']->where('kriteria_id', $k->id)->first()->nilai ?? 0;
-                                    $squareTerms[] = "{$val}&sup2;";
-                                    $sumSquares += pow($val, 2);
-                                }
-                                $formulaStr = implode(' + ', $squareTerms);
-                                $denom = $pembagi[$k->id] ?? 1;
-                            @endphp
-                            <div class="col-12">
-                                <div class="p-3 bg-light rounded-3 border">
-                                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-                                        <span class="fw-bold text-dark fs-6">{{ $k->kode_kriteria }} ({{ $k->nama_kriteria }} - {{ ucfirst($k->tipe) }}):</span>
-                                        <span class="badge bg-primary px-3 py-1.5 fs-6" style="border-radius: 8px;">
-                                            Penyebut = {{ number_format($denom, 5, ',', '.') }}
-                                        </span>
+
+                        <!-- Formula Info Box (Detail) -->
+                        <div class="px-4 pt-4 d-print-none">
+                            <div class="alert alert-info border-0 shadow-xs mb-0 d-flex align-items-center gap-2.5" style="border-radius: 8px; background-color: #e0f2fe; border-left: 4px solid #0284c7 !important; color: #0369a1;">
+                                <i class="bi bi-info-circle-fill fs-5 text-info"></i>
+                                <span><strong>Rumus akar untuk normalisasi:</strong> &radic;[ &Sigma;(x<sub>ij</sub>)&sup2; ] = &radic;[ x<sub>1j</sub>&sup2; + x<sub>2j</sub>&sup2; + ... + x<sub>mj</sub>&sup2; ]</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-white">
+                            <!-- Table of Denominators for screen view (Detail) -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered align-middle text-center premium-table mb-0">
+                                    <thead class="bg-dark text-white">
+                                        <tr>
+                                            <th class="py-3 text-start" style="width: 25%;">Detail Kriteria & Perhitungan</th>
+                                            @foreach($kriterias as $k)
+                                                <th class="py-3">{{ $k->kode_kriteria }}<br><small class="text-white-50" style="font-size: 0.75rem;">({{ $k->nama_kriteria }})</small></th>
+                                            @endforeach
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold text-start ps-3 py-3">Jumlah Kuadrat [&Sigma;(x<sub>ij</sub>)&sup2;]</td>
+                                            @foreach($kriterias as $k)
+                                                @php
+                                                    $sumSquares = 0;
+                                                    foreach($alternatifs as $altKey => $alt) {
+                                                        $val = $alt['items']->where('kriteria_id', $k->id)->first()->nilai ?? 0;
+                                                        $sumSquares += pow($val, 2);
+                                                    }
+                                                @endphp
+                                                <td class="text-secondary fw-semibold">{{ number_format($sumSquares, 5, ',', '.') }}</td>
+                                            @endforeach
+                                        </tr>
+                                        <tr class="table-light">
+                                            <td class="fw-bold text-start ps-3 py-3">Akar Kuadrat (Penyebut) [&radic;(&Sigma;(x<sub>ij</sub>)&sup2;)]</td>
+                                            @foreach($kriterias as $k)
+                                                <td class="text-primary fw-bold">{{ number_format($pembagi[$k->id] ?? 1, 5, ',', '.') }}</td>
+                                            @endforeach
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Detail of formula breakdown per criterion (Detail) -->
+                            <div class="mt-4">
+                                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-gear-fill text-muted me-1 d-print-none"></i>Detail Penjabaran Rumus per Kriteria:</h6>
+                                <div class="row g-3">
+                                    @foreach($kriterias as $k)
+                                    @php
+                                        $squareTerms = [];
+                                        $sumSquares = 0;
+                                        foreach($alternatifs as $altKey => $alt) {
+                                            $val = $alt['items']->where('kriteria_id', $k->id)->first()->nilai ?? 0;
+                                            $squareTerms[] = "{$val}²";
+                                            $sumSquares += pow($val, 2);
+                                        }
+                                        $formulaStr = implode(' + ', $squareTerms);
+                                        $denom = $pembagi[$k->id] ?? 1;
+                                    @endphp
+                                    <div class="col-12 col-lg-6">
+                                        <div class="p-3 bg-light rounded-3 border">
+                                            <span class="fw-bold text-dark fs-6 d-block mb-1">{{ $k->kode_kriteria }} ({{ $k->nama_kriteria }}):</span>
+                                            <code class="text-secondary fs-7 font-monospace">
+                                                &radic;[ {!! $formulaStr !!} ] = &radic;[ {{ $sumSquares }} ] = <strong>{{ number_format($denom, 5, ',', '.') }}</strong>
+                                            </code>
+                                        </div>
                                     </div>
-                                    <div class="math-formula-block font-monospace text-secondary fs-7">
-                                        &radic;[ {!! $formulaStr !!} ] = &radic;[ {{ $sumSquares }} ] = <strong>{{ number_format($denom, 5, ',', '.') }}</strong>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
-                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -597,6 +719,14 @@
                             <p class="mb-0 small text-muted">
                                 <strong>Penjelasan</strong>: Hasil pembagian setiap nilai pada matriks keputusan (Langkah 1) dengan nilai penyebut normalisasi kriteria yang bersangkutan (Langkah 2). Nilai desimal dibulatkan menjadi 5 angka di belakang koma.
                             </p>
+                        </div>
+
+                        <!-- Formula Info Box (Detail) -->
+                        <div class="px-4 pt-4 d-print-none">
+                            <div class="alert alert-info border-0 shadow-xs mb-0 d-flex align-items-center gap-2.5" style="border-radius: 8px; background-color: #eff6ff; border-left: 4px solid #3b82f6 !important; color: #1e3a8a;">
+                                <i class="bi bi-info-circle-fill fs-5 text-primary"></i>
+                                <span><strong>Rumus normalisasi:</strong> X*<sub>ij</sub> = x<sub>ij</sub> / &radic;[ &Sigma;<sub>i=1</sub><sup>m</sup> x<sub>ij</sub>&sup2; ]</span>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle premium-table mb-0">
@@ -650,6 +780,14 @@
                             <p class="mb-0 small text-muted">
                                 <strong>Penjelasan</strong>: Hasil perkalian antara nilai matriks keputusan ternormalisasi (Langkah 3) dengan bobot kriteria masing-masing. Bobot kriteria tertera di bagian atas kolom.
                             </p>
+                        </div>
+
+                        <!-- Formula Info Box (Detail) -->
+                        <div class="px-4 pt-4 d-print-none">
+                            <div class="alert alert-info border-0 shadow-xs mb-0 d-flex align-items-center gap-2.5" style="border-radius: 8px; background-color: #fffbeb; border-left: 4px solid #d97706 !important; color: #78350f;">
+                                <i class="bi bi-info-circle-fill fs-5 text-warning"></i>
+                                <span><strong>Rumus nilai terbobot:</strong> y<sub>ij</sub> = X*<sub>ij</sub> &times; w<sub>j</sub> <br><small class="opacity-75">(X*<sub>ij</sub>: nilai normalisasi, w<sub>j</sub>: bobot kriteria)</small></span>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle premium-table mb-0">
@@ -706,6 +844,14 @@
                             <p class="mb-0 small text-muted">
                                 <strong>Penjelasan</strong>: Nilai optimasi (Yi) diperoleh dengan menjumlahkan nilai terbobot kriteria keuntungan (Benefit) lalu dikurangi dengan jumlah nilai terbobot kriteria biaya (Cost). Pada tabel ini, alternatif diurutkan berdasarkan kodenya (A1 s.d An).
                             </p>
+                        </div>
+
+                        <!-- Formula Info Box (Detail) -->
+                        <div class="px-4 pt-4 d-print-none">
+                            <div class="alert alert-info border-0 shadow-xs mb-0 d-flex align-items-center gap-2.5" style="border-radius: 8px; background-color: #fef2f2; border-left: 4px solid #ef4444 !important; color: #7f1d1d;">
+                                <i class="bi bi-info-circle-fill fs-5 text-danger"></i>
+                                <span><strong>Rumus nilai akhir MOORA:</strong> Y<sub>i</sub> = &Sigma; (w<sub>j</sub> &times; X*<sub>ij</sub>) (benefit) - &Sigma; (w<sub>j</sub> &times; X*<sub>ij</sub>) (cost)</span>
+                            </div>
                         </div>
                         <div class="p-3 bg-white border-bottom">
                             <h6 class="fw-bold text-dark mb-1">Rumus Optimasi Yi:</h6>
