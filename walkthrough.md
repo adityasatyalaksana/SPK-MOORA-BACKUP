@@ -54,6 +54,7 @@ Kami menjalankan pengujian sistem backend dan database secara langsung menggunak
     *   *Waktu:* `2026-06-02 15:35:27`
     *   *Admin:* `Admin (@admin)`
     *   *Aktivitas:* `Melakukan verifikasi sistem log pertama kali`
+*   **Dokumen Pengujian Black Box:** Telah dibuat dokumen skenario [pengujian_black_box.md](file:///c:/laragon/www/SPK-MOORA/pengujian_black_box.md) yang menjabarkan 12 modul skenario pengujian fungsionalitas sistem (Login, Dashboard, CRUD Gunung, Terminal, Jalur, Biaya Bus, Kriteria, Penilaian, Hasil MOORA, Audit Trail, Kelola User, dan Pencarian Rekomendasi).
 
 ---
 
